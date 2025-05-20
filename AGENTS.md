@@ -78,6 +78,7 @@ For each PR milestone in TODO.md:
 3. Update the TODO.md file to mark completed tasks
 4. Create a pull request with a clear description of what was implemented
 5. Wait for review and approval before moving to the next milestone
+6. **PR titles must be written in English**
 
 ## Error Handling
 
