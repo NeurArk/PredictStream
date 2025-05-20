@@ -3,13 +3,19 @@
 from __future__ import annotations
 
 from functools import wraps
-from typing import Callable, Tuple
+from pathlib import Path
+from typing import Callable, Dict, Tuple
 
 import pandas as pd
 import numpy as np
+from joblib import dump
 from sklearn.model_selection import train_test_split, cross_val_score
-from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression, LinearRegression
+from sklearn.ensemble import (
+    RandomForestClassifier,
+    RandomForestRegressor,
+)
+from sklearn.tree import DecisionTreeRegressor
 from sklearn.base import BaseEstimator
 
 
@@ -48,7 +54,15 @@ def train_test_split_data(
     """Split dataframe into train and test sets."""
     X = df.drop(columns=[target])
     y = df[target]
-    return train_test_split(X, y, test_size=test_size, random_state=random_state, stratify=y)
+    problem = detect_problem_type(y)
+    strat = y if problem == "classification" else None
+    return train_test_split(
+        X,
+        y,
+        test_size=test_size,
+        random_state=random_state,
+        stratify=strat,
+    )
 
 
 @cache_model
@@ -94,3 +108,77 @@ def cross_validate_model(
     """Return cross-validation scores for the given model."""
     scores = cross_val_score(model, X, y, cv=cv)
     return scores
+
+
+def detect_problem_type(y: pd.Series) -> str:
+    """Return 'classification' or 'regression' based on target variable."""
+    if pd.api.types.is_numeric_dtype(y):
+        unique = y.nunique(dropna=False)
+        threshold = max(20, int(0.05 * len(y)))
+        return "classification" if unique <= threshold else "regression"
+    return "classification"
+
+
+@cache_model
+def train_linear_regression(
+    X: pd.DataFrame,
+    y: pd.Series,
+) -> LinearRegression:
+    """Train a Linear Regression model."""
+    model = LinearRegression()
+    model.fit(X, y)
+    return model
+
+
+@cache_model
+def train_decision_tree_regressor(
+    X: pd.DataFrame,
+    y: pd.Series,
+    *,
+    max_depth: int | None = None,
+    random_state: int | None = None,
+) -> DecisionTreeRegressor:
+    """Train a Decision Tree Regressor."""
+    model = DecisionTreeRegressor(max_depth=max_depth, random_state=random_state)
+    model.fit(X, y)
+    return model
+
+
+@cache_model
+def train_random_forest_regressor(
+    X: pd.DataFrame,
+    y: pd.Series,
+    *,
+    n_estimators: int = 100,
+    max_depth: int | None = None,
+    random_state: int | None = None,
+) -> RandomForestRegressor:
+    """Train a Random Forest Regressor."""
+    model = RandomForestRegressor(
+        n_estimators=n_estimators,
+        max_depth=max_depth,
+        random_state=random_state,
+    )
+    model.fit(X, y)
+    return model
+
+
+def compare_models(
+    models: Dict[str, BaseEstimator],
+    X: pd.DataFrame,
+    y: pd.Series,
+    *,
+    cv: int = 5,
+    scoring: str | None = None,
+) -> Dict[str, float]:
+    """Return mean cross-validation scores for multiple models."""
+    results: Dict[str, float] = {}
+    for name, mdl in models.items():
+        scores = cross_val_score(mdl, X, y, cv=cv, scoring=scoring)
+        results[name] = float(scores.mean())
+    return results
+
+
+def save_model(model: BaseEstimator, path: Path) -> None:
+    """Serialize a trained model to disk."""
+    dump(model, path)
