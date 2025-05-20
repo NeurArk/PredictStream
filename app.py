@@ -5,6 +5,9 @@ from utils import config
 from utils import data as data_utils
 from utils import eda
 from utils import model
+from sklearn.linear_model import LinearRegression
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.ensemble import RandomForestRegressor
 
 st.set_page_config(page_title="PredictStream", layout="wide")
 
@@ -116,6 +119,72 @@ def main() -> None:
             progress.progress(100)
             st.write("Cross-validation scores:", scores)
             st.write("Mean accuracy:", float(scores.mean()))
+
+        st.subheader("Detected Problem Type")
+        st.write(model.detect_problem_type(data[target]))
+
+        st.subheader("Model Training - Regression")
+        target_r = st.selectbox("Target Column (regression)", options=data.columns, key="target_reg")
+        feature_cols_r = st.multiselect(
+            "Feature Columns (reg)",
+            options=[c for c in data.columns if c != target_r],
+            default=[c for c in data.columns if c != target_r],
+            key="features_reg",
+        )
+        test_size_r = st.slider("Test Size (reg)", 0.1, 0.5, 0.2, step=0.05, key="ts_reg")
+        model_name_r = st.selectbox(
+            "Model (reg)",
+            ["Linear Regression", "Decision Tree", "Random Forest"],
+            key="model_reg",
+        )
+
+        hyperparams_r = {}
+        if model_name_r == "Decision Tree":
+            hyperparams_r["max_depth"] = st.slider("max_depth", 1, 20, 3, key="max_depth")
+        elif model_name_r == "Random Forest":
+            hyperparams_r["n_estimators"] = st.slider("n_estimators", 10, 200, 100, 10, key="n_est")
+            hyperparams_r["max_depth"] = st.slider("max_depth_rf", 1, 20, 3, key="max_depth_rf")
+
+        if st.button("Train Regression Model") and feature_cols_r:
+            df_r = data[feature_cols_r + [target_r]]
+            X_train, X_test, y_train, y_test = model.train_test_split_data(
+                df_r,
+                target_r,
+                test_size=test_size_r,
+                random_state=42,
+            )
+            if model_name_r == "Linear Regression":
+                reg = model.train_linear_regression(X_train, y_train)
+            elif model_name_r == "Decision Tree":
+                reg = model.train_decision_tree_regressor(
+                    X_train,
+                    y_train,
+                    max_depth=hyperparams_r.get("max_depth"),
+                    random_state=42,
+                )
+            else:
+                reg = model.train_random_forest_regressor(
+                    X_train,
+                    y_train,
+                    n_estimators=hyperparams_r.get("n_estimators", 100),
+                    max_depth=hyperparams_r.get("max_depth_rf"),
+                    random_state=42,
+                )
+            scores = model.cross_validate_model(reg, X_train, y_train, cv=5)
+            st.write("CV scores:", scores)
+            st.write("Mean R2:", float(scores.mean()))
+
+        if st.button("Compare Regression Models") and feature_cols_r:
+            df_r = data[feature_cols_r + [target_r]]
+            X = df_r.drop(columns=[target_r])
+            y = df_r[target_r]
+            models_dict = {
+                "Linear": LinearRegression(),
+                "DecisionTree": DecisionTreeRegressor(),
+                "RandomForest": RandomForestRegressor(random_state=42),
+            }
+            results = model.compare_models(models_dict, X, y, cv=5, scoring="r2")
+            st.write(results)
 
 
 if __name__ == "__main__":

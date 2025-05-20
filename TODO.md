@@ -72,16 +72,16 @@ After completing a milestone, create a pull request with your changes for review
 
 ## PR6: Model Training - Regression
 
-- [ ] Extend model selection interface for regression
-- [ ] Implement Linear Regression
-- [ ] Implement Decision Tree Regressor
-- [ ] Implement Random Forest Regressor
-- [ ] Create problem type detector (classification/regression)
-- [ ] Add regression-specific hyperparameter options
-- [ ] Implement model comparison functionality
-- [ ] Create model serialization/save functionality
-- [ ] Write tests for regression modeling functions
-- [ ] Test model auto-detection with different datasets
+- [x] Extend model selection interface for regression
+- [x] Implement Linear Regression
+- [x] Implement Decision Tree Regressor
+- [x] Implement Random Forest Regressor
+- [x] Create problem type detector (classification/regression)
+- [x] Add regression-specific hyperparameter options
+- [x] Implement model comparison functionality
+- [x] Create model serialization/save functionality
+- [x] Write tests for regression modeling functions
+- [x] Test model auto-detection with different datasets
 
 ## PR7: Model Evaluation & Interpretation
 

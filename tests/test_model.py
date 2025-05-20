@@ -1,11 +1,18 @@
 import pandas as pd
-from sklearn.datasets import make_classification
+from sklearn.datasets import make_classification, make_regression
 
 from utils import model
 
 
 def sample_df():
     X, y = make_classification(n_samples=50, n_features=4, n_classes=2, random_state=0)
+    df = pd.DataFrame(X, columns=[f"f{i}" for i in range(4)])
+    df["target"] = y
+    return df
+
+
+def sample_reg_df():
+    X, y = make_regression(n_samples=50, n_features=4, noise=0.1, random_state=0)
     df = pd.DataFrame(X, columns=[f"f{i}" for i in range(4)])
     df["target"] = y
     return df
@@ -57,3 +64,36 @@ def test_model_caching():
     first = custom_train(X_train, y_train)
     second = custom_train(X_train, y_train)
     assert first is second
+
+
+def test_regression_training_functions():
+    df = sample_reg_df()
+    X_train, X_test, y_train, y_test = model.train_test_split_data(df, "target")
+    lr = model.train_linear_regression(X_train, y_train)
+    dt = model.train_decision_tree_regressor(X_train, y_train, max_depth=2)
+    rf = model.train_random_forest_regressor(X_train, y_train, n_estimators=10)
+    for reg in (lr, dt, rf):
+        preds = reg.predict(X_test)
+        assert len(preds) == len(y_test)
+
+
+def test_problem_type_detector():
+    df_class = sample_df()
+    df_reg = sample_reg_df()
+    assert model.detect_problem_type(df_class["target"]) == "classification"
+    assert model.detect_problem_type(df_reg["target"]) == "regression"
+
+
+def test_compare_models_and_save(tmp_path):
+    df = sample_reg_df()
+    X = df.drop(columns=["target"])
+    y = df["target"]
+    models_dict = {
+        "lin": model.train_linear_regression(X, y),
+        "tree": model.train_decision_tree_regressor(X, y, max_depth=2),
+    }
+    results = model.compare_models(models_dict, X, y, cv=3, scoring="r2")
+    assert set(results) == {"lin", "tree"}
+    path = tmp_path / "model.joblib"
+    model.save_model(models_dict["lin"], path)
+    assert path.exists() and path.stat().st_size > 0
