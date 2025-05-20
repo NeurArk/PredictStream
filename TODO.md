@@ -85,16 +85,16 @@ After completing a milestone, create a pull request with your changes for review
 
 ## PR7: Model Evaluation & Interpretation
 
-- [ ] Create performance metrics calculator
-- [ ] Implement confusion matrix for classification
-- [ ] Add ROC curve generator for classification
-- [ ] Create precision-recall curve for classification
-- [ ] Implement actual vs predicted plots for regression
-- [ ] Add residual plot generator for regression
-- [ ] Create feature importance visualization
-- [ ] Implement SHAP value calculator and visualizer
-- [ ] Write tests for all model evaluation metrics
-- [ ] Test visualization of model interpretability features
+- [x] Create performance metrics calculator
+- [x] Implement confusion matrix for classification
+- [x] Add ROC curve generator for classification
+- [x] Create precision-recall curve for classification
+- [x] Implement actual vs predicted plots for regression
+- [x] Add residual plot generator for regression
+- [x] Create feature importance visualization
+- [x] Implement SHAP value calculator and visualizer
+- [x] Write tests for all model evaluation metrics
+- [x] Test visualization of model interpretability features
 
 ## PR8: Prediction & Export Functionality
 

@@ -8,6 +8,14 @@ from typing import Optional
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+import numpy as np
+from sklearn.metrics import (
+    roc_curve,
+    precision_recall_curve,
+    confusion_matrix as sk_confusion_matrix,
+)
+import matplotlib.pyplot as plt
+import shap
 
 
 def histogram(
@@ -101,3 +109,83 @@ def heatmap(
 def export_figure(fig: go.Figure, path: Path) -> None:
     """Export a figure to an HTML file."""
     fig.write_html(str(path))
+
+
+def confusion_matrix_plot(y_true, y_pred, *, title: Optional[str] = None) -> go.Figure:
+    """Return a confusion matrix heatmap."""
+    cm = sk_confusion_matrix(y_true, y_pred)
+    fig = px.imshow(cm, text_auto=True, color_continuous_scale="Blues", title=title)
+    fig.update_xaxes(title="Predicted")
+    fig.update_yaxes(title="Actual")
+    return fig
+
+
+def roc_curve_plot(y_true, y_score, *, title: Optional[str] = None) -> go.Figure:
+    """Return ROC curve figure."""
+    fpr, tpr, _ = roc_curve(y_true, y_score)
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=fpr, y=tpr, mode="lines", name="ROC"))
+    fig.add_shape(type="line", x0=0, y0=0, x1=1, y1=1, line=dict(dash="dash"))
+    fig.update_layout(
+        title=title or "ROC Curve",
+        xaxis_title="False Positive Rate",
+        yaxis_title="True Positive Rate",
+    )
+    return fig
+
+
+def precision_recall_curve_plot(y_true, y_score, *, title: Optional[str] = None) -> go.Figure:
+    """Return precision-recall curve figure."""
+    precision, recall, _ = precision_recall_curve(y_true, y_score)
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=recall, y=precision, mode="lines", name="PR"))
+    fig.update_layout(
+        title=title or "Precision-Recall Curve",
+        xaxis_title="Recall",
+        yaxis_title="Precision",
+    )
+    return fig
+
+
+def actual_vs_predicted_plot(y_true, y_pred, *, title: Optional[str] = None) -> go.Figure:
+    """Return actual vs predicted scatter plot."""
+    fig = px.scatter(x=y_true, y=y_pred, labels={"x": "Actual", "y": "Predicted"}, title=title)
+    min_val = min(np.min(y_true), np.min(y_pred))
+    max_val = max(np.max(y_true), np.max(y_pred))
+    fig.add_shape(type="line", x0=min_val, y0=min_val, x1=max_val, y1=max_val, line=dict(dash="dash"))
+    return fig
+
+
+def residual_plot(y_true, y_pred, *, title: Optional[str] = None) -> go.Figure:
+    """Return residual plot."""
+    residuals = np.array(y_true) - np.array(y_pred)
+    fig = px.scatter(x=y_pred, y=residuals, labels={"x": "Predicted", "y": "Residual"}, title=title)
+    fig.add_shape(type="line", x0=np.min(y_pred), y0=0, x1=np.max(y_pred), y1=0, line=dict(dash="dash"))
+    return fig
+
+
+def feature_importance_plot(model, feature_names: list[str], *, title: Optional[str] = None) -> go.Figure:
+    """Return feature importance bar chart."""
+    if hasattr(model, "feature_importances_"):
+        importances = model.feature_importances_
+    elif hasattr(model, "coef_"):
+        importances = np.abs(model.coef_)
+        if importances.ndim > 1:
+            importances = importances[0]
+    else:
+        raise ValueError("Model has no feature importances")
+    df = pd.DataFrame({"feature": feature_names, "importance": importances})
+    df = df.sort_values("importance", ascending=False)
+    fig = px.bar(df, x="feature", y="importance", title=title or "Feature Importance")
+    return fig
+
+
+def shap_summary_plot(model, X: pd.DataFrame, *, title: Optional[str] = None):
+    """Return SHAP summary plot as a Matplotlib figure."""
+    explainer = shap.Explainer(model, X)
+    values = explainer(X)
+    shap.plots.beeswarm(values, show=False)
+    fig = plt.gcf()
+    if title:
+        fig.suptitle(title)
+    return fig
