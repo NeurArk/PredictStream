@@ -1,7 +1,6 @@
 """Main entry point for PredictStream."""
 
 import streamlit as st
-
 from utils import config
 from utils import data as data_utils
 
