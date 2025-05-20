@@ -27,7 +27,7 @@ The project follows a simple modular structure with these key components:
 ## Development Environment
 
 ### Setup
-The project requires Python 3.9+. To set up the development environment:
+The project requires Python 3.11+. To set up the development environment:
 1. Install all dependencies listed in requirements.txt
 2. Run the application using the Streamlit CLI
 

@@ -15,7 +15,7 @@ An interactive Streamlit dashboard for data exploration and predictive analytics
 
 ## 📋 Requirements
 
-- Python 3.9+
+- Python 3.11+
 - Streamlit
 - Pandas, NumPy
 - Scikit-learn

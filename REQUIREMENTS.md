@@ -91,20 +91,26 @@ This document outlines the detailed requirements and specifications for the Pred
 
 ## Technical Requirements
 
-### 1. Performance
+### 1. Environment
+
+- **Python Version**: Requires Python 3.11 or later
+- **Core Libraries**: Compatible with latest versions of Streamlit, Pandas, NumPy, and Scikit-learn
+- **Development Tools**: Uses pytest for testing
+
+### 2. Performance
 
 - **Efficient Data Handling**: Use appropriate techniques for larger datasets
 - **Caching**: Implement caching for expensive operations (data processing, model training)
 - **Optimization**: Balance functionality with performance considerations
 
-### 2. Code Quality
+### 3. Code Quality
 
 - **Modular Structure**: Organize code into logical modules and functions
 - **Documentation**: Include comprehensive docstrings and comments
 - **Error Handling**: Implement robust exception handling
 - **Type Hints**: Use Python type hints for improved code quality
 
-### 3. Deployment Considerations
+### 4. Deployment Considerations
 
 - **Dependencies**: Minimize and properly document all dependencies
 - **Environment**: Ensure compatibility with standard deployment platforms
