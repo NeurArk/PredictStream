@@ -6,5 +6,6 @@ from . import eda
 from . import viz
 from . import model
 from . import eval
+from . import predict
 
-__all__ = ["config", "data", "eda", "viz", "model", "eval"]
+__all__ = ["config", "data", "eda", "viz", "model", "eval", "predict"]
