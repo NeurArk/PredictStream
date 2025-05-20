@@ -3,16 +3,39 @@
 from __future__ import annotations
 
 from typing import Any, Dict, List
+from functools import wraps
 
 import numpy as np
 import pandas as pd
 
 
+def _hash_df(df: pd.DataFrame) -> int:
+    """Return a hash for a DataFrame."""
+    return int(pd.util.hash_pandas_object(df, index=True).sum())
+
+
+def df_cache(func):
+    """Cache DataFrame-returning functions based on input hash."""
+
+    cache: Dict[tuple, Any] = {}
+
+    @wraps(func)
+    def wrapper(df: pd.DataFrame, *args, **kwargs):
+        key = (_hash_df(df), func.__name__, args, tuple(sorted(kwargs.items())))
+        if key not in cache:
+            cache[key] = func(df.copy(), *args, **kwargs)
+        return cache[key]
+
+    return wrapper
+
+
+@df_cache
 def summary_statistics(df: pd.DataFrame) -> pd.DataFrame:
     """Return summary statistics for all columns."""
     return df.describe(include="all")
 
 
+@df_cache
 def data_quality_assessment(df: pd.DataFrame) -> pd.DataFrame:
     """Return data quality metrics for each column."""
     total = len(df)
@@ -24,6 +47,7 @@ def data_quality_assessment(df: pd.DataFrame) -> pd.DataFrame:
     })
 
 
+@df_cache
 def correlation_matrix(df: pd.DataFrame, method: str = "pearson") -> pd.DataFrame:
     """Return the correlation matrix for numeric columns."""
     numeric_df = df.select_dtypes(include="number")

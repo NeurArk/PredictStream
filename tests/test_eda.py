@@ -59,3 +59,10 @@ def test_data_insights_summary():
     df = sample_df()
     insights = eda.data_insights_summary(df)
     assert any('missing values' in text for text in insights)
+
+
+def test_eda_caching():
+    df = sample_df()
+    first = eda.summary_statistics(df)
+    second = eda.summary_statistics(df)
+    assert first is second
