@@ -58,17 +58,17 @@ After completing a milestone, create a pull request with your changes for review
 
 ## PR5: Model Training - Classification
 
-- [ ] Create feature selection interface
-- [ ] Add train/test split functionality
-- [ ] Implement cross-validation
-- [ ] Create model selection interface for classification
-- [ ] Implement Logistic Regression
-- [ ] Implement Random Forest Classifier
-- [ ] Add hyperparameter selection interface
-- [ ] Create model training progress indicators
-- [ ] Implement model caching for performance
-- [ ] Write tests for model training pipeline
-- [ ] Create test cases for classification models with sample datasets
+- [x] Create feature selection interface
+- [x] Add train/test split functionality
+- [x] Implement cross-validation
+- [x] Create model selection interface for classification
+- [x] Implement Logistic Regression
+- [x] Implement Random Forest Classifier
+- [x] Add hyperparameter selection interface
+- [x] Create model training progress indicators
+- [x] Implement model caching for performance
+- [x] Write tests for model training pipeline
+- [x] Create test cases for classification models with sample datasets
 
 ## PR6: Model Training - Regression
 

@@ -4,6 +4,7 @@ import streamlit as st
 from utils import config
 from utils import data as data_utils
 from utils import eda
+from utils import model
 
 st.set_page_config(page_title="PredictStream", layout="wide")
 
@@ -69,6 +70,52 @@ def main() -> None:
         st.subheader("Insights")
         for insight in eda.data_insights_summary(data):
             st.write(f"- {insight}")
+
+        st.subheader("Model Training - Classification")
+        target = st.selectbox("Target Column", options=data.columns)
+        feature_cols = st.multiselect(
+            "Feature Columns",
+            options=[c for c in data.columns if c != target],
+            default=[c for c in data.columns if c != target],
+        )
+        test_size = st.slider("Test Size", 0.1, 0.5, 0.2, step=0.05)
+        model_name = st.selectbox("Model", ["Logistic Regression", "Random Forest"])
+
+        hyperparams = {}
+        if model_name == "Logistic Regression":
+            hyperparams["C"] = st.number_input("C", 0.01, 10.0, 1.0, step=0.01)
+        else:
+            hyperparams["n_estimators"] = st.slider("n_estimators", 10, 200, 100, step=10)
+
+        if st.button("Train Model") and feature_cols:
+            progress = st.progress(0)
+            df_model = data[feature_cols + [target]]
+            X_train, X_test, y_train, y_test = model.train_test_split_data(
+                df_model,
+                target,
+                test_size=test_size,
+                random_state=42,
+            )
+            progress.progress(25)
+            if model_name == "Logistic Regression":
+                clf = model.train_logistic_regression(
+                    X_train,
+                    y_train,
+                    C=hyperparams.get("C", 1.0),
+                    max_iter=200,
+                )
+            else:
+                clf = model.train_random_forest_classifier(
+                    X_train,
+                    y_train,
+                    n_estimators=hyperparams.get("n_estimators", 100),
+                    random_state=42,
+                )
+            progress.progress(75)
+            scores = model.cross_validate_model(clf, X_train, y_train, cv=5)
+            progress.progress(100)
+            st.write("Cross-validation scores:", scores)
+            st.write("Mean accuracy:", float(scores.mean()))
 
 
 if __name__ == "__main__":
