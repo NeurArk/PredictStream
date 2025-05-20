@@ -3,6 +3,7 @@
 import streamlit as st
 from utils import config
 from utils import data as data_utils
+from utils import eda
 
 st.set_page_config(page_title="PredictStream", layout="wide")
 
@@ -53,9 +54,21 @@ def main() -> None:
         end = start + page_size
         st.dataframe(data.iloc[start:end])
 
-        st.subheader("Data Summary")
-        summary = data_utils.data_summary(data)
+        st.subheader("Summary Statistics")
+        summary = eda.summary_statistics(data)
         st.dataframe(summary)
+
+        st.subheader("Data Quality")
+        quality = eda.data_quality_assessment(data)
+        st.dataframe(quality)
+
+        st.subheader("Correlation Matrix")
+        corr = eda.correlation_matrix(data)
+        st.dataframe(corr)
+
+        st.subheader("Insights")
+        for insight in eda.data_insights_summary(data):
+            st.write(f"- {insight}")
 
 
 if __name__ == "__main__":
