@@ -45,6 +45,9 @@ def main() -> None:
                 )
                 st.success(f"{name} loaded!")
 
+        with st.expander("Help"):
+            st.markdown(ui.help_markdown())
+
     if uploaded_file is not None:
         try:
             df = data_utils.load_data(uploaded_file)
@@ -71,15 +74,28 @@ def main() -> None:
         st.dataframe(data.iloc[start:end], use_container_width=True)
 
         st.subheader("Summary Statistics")
-        summary = eda.summary_statistics(data)
+
+        @st.cache_data
+        def _summary(df):
+            return eda.summary_statistics(df)
+
+        summary = _summary(data)
         st.dataframe(summary, use_container_width=True)
 
         st.subheader("Data Quality")
-        quality = eda.data_quality_assessment(data)
+        @st.cache_data
+        def _quality(df):
+            return eda.data_quality_assessment(df)
+
+        quality = _quality(data)
         st.dataframe(quality, use_container_width=True)
 
         st.subheader("Correlation Matrix")
-        corr = eda.correlation_matrix(data)
+        @st.cache_data
+        def _corr(df):
+            return eda.correlation_matrix(df)
+
+        corr = _corr(data)
         st.dataframe(corr, use_container_width=True)
 
         st.subheader("Insights")

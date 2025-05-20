@@ -28,3 +28,14 @@ def getting_started_markdown() -> str:
         "- Quick exploratory analysis of a new dataset.\n"
         "- Comparing several models on the same data.\n"
     )
+
+
+def help_markdown() -> str:
+    """Return markdown text for the in-app help section."""
+    return (
+        "### Help\n"
+        "- Use the sidebar to upload data or load a sample dataset.\n"
+        "- Configure models using the options provided.\n"
+        "- Results and metrics appear below each section.\n"
+        "- Export figures and predictions using the download buttons."
+    )
