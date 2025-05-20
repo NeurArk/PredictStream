@@ -9,13 +9,13 @@ After completing a milestone, create a pull request with your changes for review
 - [x] Create repository structure
 - [x] Set up README.md
 - [x] Create requirements.txt
-- [ ] Create main application entry point (app.py) with basic structure
-- [ ] Set up project configuration
-- [ ] Add sample datasets in data directory
-- [ ] Implement basic UI theme and layout
-- [ ] Create utility module structure
-- [ ] Setup testing framework and basic test structure
-- [ ] Create tests for the initial application structure
+- [x] Create main application entry point (app.py) with basic structure
+- [x] Set up project configuration
+- [x] Add sample datasets in data directory
+- [x] Implement basic UI theme and layout
+- [x] Create utility module structure
+- [x] Setup testing framework and basic test structure
+- [x] Create tests for the initial application structure
 
 ## PR2: Data Import & Management
 
