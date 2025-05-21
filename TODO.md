@@ -131,6 +131,51 @@ After completing a milestone, create a pull request with your changes for review
 - [x] Final bug fixing and polish
 - [x] Complete final testing and validation
 
+## PR11: Multi-Page Structure & Branding
+
+- [ ] Create `pages/` directory and refactor `app.py` into multiple pages
+- [ ] Implement sidebar navigation linking to each page
+- [ ] Add `static/` directory with placeholder `logo.png`
+- [ ] Integrate NeurArk colors and logo throughout the UI
+- [ ] Update README with new project structure
+- [ ] Write tests verifying that pages load correctly
+
+## PR12: Data Transformation Module
+
+- [ ] Implement missing value handling options (drop, fill with mean/median/mode)
+- [ ] Add feature encoding choices (one-hot and label encoding)
+- [ ] Provide scaling/normalization utilities (min-max and standard)
+- [ ] Create UI controls for applying transformations
+- [ ] Write unit tests for transformation functions
+- [ ] Add integration tests covering transformation workflow
+
+## PR13: Enhanced Visualizations & Export
+
+- [ ] Implement pair plot visualization for feature relationships
+- [ ] Enable export of visualizations as PNG and JPG
+- [ ] Add UI selection for export format
+- [ ] Write tests for pair plot generation and image export
+
+## PR14: XGBoost Model Integration
+
+- [ ] Extend model selection to include XGBoost for classification and regression
+- [ ] Provide basic hyperparameter options for XGBoost models
+- [ ] Update training utilities to support XGBoost
+- [ ] Write tests covering XGBoost training and evaluation
+
+## PR15: Time Series Analysis
+
+- [ ] Detect datetime columns and offer time series plotting tools
+- [ ] Implement decomposition plots for trend/seasonality analysis
+- [ ] Write tests for time series detection and visualization
+
+## PR16: Dedicated Prediction & Report Pages
+
+- [ ] Create separate page for single and batch predictions
+- [ ] Add page for generating and downloading analysis reports
+- [ ] Ensure navigation links include new pages
+- [ ] Write integration tests for prediction and report pages
+
 ## Notes for Development
 
 - Create comprehensive commit messages that clearly describe changes
