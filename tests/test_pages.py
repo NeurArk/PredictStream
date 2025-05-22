@@ -11,6 +11,7 @@ PAGES = [
     "pages.modeling",
     "pages.prediction",
     "pages.report",
+    "pages.time_series",
 ]
 
 @pytest.mark.parametrize("mod_name", PAGES)
@@ -64,4 +65,28 @@ def test_modeling_page_widgets_exist():
     assert "st.multiselect(\"Models\"" in content
     assert "Train Models" in content
     assert "export_model" in content
+
+
+def test_time_series_page_runs(monkeypatch):
+    import streamlit as st
+    from pages import time_series
+
+    df = pd.DataFrame(
+        {
+            "date": pd.date_range("2021-01-01", periods=5, freq="D"),
+            "value": range(5),
+        }
+    )
+    st.session_state.clear()
+    st.session_state["data"] = df
+    st.session_state["datetime_cols"] = ["date"]
+    monkeypatch.setattr(time_series.ui, "apply_branding", lambda: None)
+    time_series.main()
+
+
+def test_time_series_page_contents():
+    with open("pages/time_series.py", "r", encoding="utf-8") as f:
+        content = f.read()
+    assert "time_series_plot" in content
+    assert "decomposition_plot" in content
 

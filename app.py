@@ -18,6 +18,7 @@ def main() -> None:
         st.page_link("pages/data_explorer.py", label="Data Explorer", icon="📊")
         st.page_link("pages/modeling.py", label="Modeling", icon="🧠")
         st.page_link("pages/prediction.py", label="Prediction", icon="🔮")
+        st.page_link("pages/time_series.py", label="Time Series", icon="📈")
         st.page_link("pages/report.py", label="Report", icon="📄")
 
 
