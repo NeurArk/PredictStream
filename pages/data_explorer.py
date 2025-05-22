@@ -49,6 +49,9 @@ def main() -> None:
                 st.session_state["data"] = data_utils.convert_dtypes(
                     st.session_state["data"]
                 )
+                st.session_state["datetime_cols"] = eda.detect_datetime_columns(
+                    st.session_state["data"]
+                )
                 st.success(f"{name} loaded!")
 
         with st.expander("Help"):
@@ -59,6 +62,7 @@ def main() -> None:
             df = data_utils.load_data(uploaded_file)
             df = data_utils.convert_dtypes(df)
             st.session_state["data"] = df
+            st.session_state["datetime_cols"] = eda.detect_datetime_columns(df)
             st.success("File loaded successfully!")
         except ValueError as exc:
             st.error(f"Failed to load file: {exc}")
