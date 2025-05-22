@@ -18,6 +18,7 @@ def main() -> None:
     """Render the time series analysis page."""
     ui.apply_branding()
     st.title("Time Series Analysis")
+    ui.apply_theme()
 
     df = st.session_state.get("data")
     if df is None or df.empty:

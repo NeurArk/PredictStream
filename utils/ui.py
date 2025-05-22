@@ -8,8 +8,19 @@ from . import config
 import streamlit as st
 
 THEME_CSS: Dict[str, str] = {
-    "Light": "",
-    "Dark": "body { background-color: #0e1117; color: #f0f0f0; }",
+    "Light": """
+<style>
+[data-testid='stSidebar'] {background-color: #f0f2f6;}
+.plotly-chart .main-svg {background-color: #ffffff;}
+</style>
+""",
+    "Dark": """
+<style>
+body {background-color: #0e1117; color: #f0f0f0;}
+[data-testid='stSidebar'] {background-color: #262730;}
+.plotly-chart .main-svg {background-color: #0e1117;}
+</style>
+""",
 }
 
 # Branding colors
@@ -29,6 +40,13 @@ h1, h2, h3 {{
 def get_theme_css(theme: str) -> str:
     """Return CSS style for the given theme."""
     return THEME_CSS.get(theme, "")
+
+
+def apply_theme(theme: str | None = None) -> None:
+    """Apply the selected theme's CSS to the app."""
+    if theme is None:
+        theme = st.session_state.get("theme", "Light")
+    st.markdown(get_theme_css(theme), unsafe_allow_html=True)
 
 
 def getting_started_markdown() -> str:

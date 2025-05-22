@@ -201,6 +201,12 @@ After completing a milestone, create a pull request with your changes for review
 - [x] Enforce maximum file size during upload
 - [x] Add tests covering oversized file uploads
 
+## PR20: Theme Improvements
+
+- [x] Extend sidebar and Plotly figure styling for both themes
+- [x] Add global theme toggle stored in session state
+- [x] Update tests to verify theme CSS output
+
 ## Notes for Development
 
 - Create comprehensive commit messages that clearly describe changes

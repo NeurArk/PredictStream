@@ -32,6 +32,7 @@ def main() -> None:
     """Render the modeling page."""
     ui.apply_branding()
     st.title("Modeling")
+    ui.apply_theme()
 
     data_keys = _available_datasets()
     if not data_keys:
