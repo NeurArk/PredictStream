@@ -139,11 +139,139 @@ def main() -> None:
                 with tempfile.NamedTemporaryFile(suffix=f".{export_fmt}") as tmp:
                     viz.export_figure(fig_pair, Path(tmp.name))
                     tmp.seek(0)
-                    st.download_button(
+                st.download_button(
                         "Download Plot",
                         data=tmp.read(),
                         file_name=f"pair_plot.{export_fmt}",
                         mime=f"image/{export_fmt}",
+                    )
+
+        st.subheader("Histogram")
+        with st.expander("Create Histogram"):
+            num_cols = data.select_dtypes(include="number").columns.tolist()
+            hist_col = st.selectbox(
+                "Column",
+                options=num_cols,
+                key="hist_col",
+            )
+            bins = st.slider(
+                "Bins",
+                5,
+                100,
+                20,
+                step=5,
+                key="hist_bins",
+            )
+            density = st.checkbox("Density", key="hist_density")
+            export_fmt_h = st.selectbox(
+                "Export Format",
+                ["png", "jpg"],
+                key="hist_fmt",
+            )
+            if st.button("Generate Histogram") and hist_col:
+                fig_hist = viz.histogram(
+                    data,
+                    hist_col,
+                    bins=bins,
+                    density=density,
+                )
+                st.plotly_chart(fig_hist, use_container_width=True)
+                with tempfile.NamedTemporaryFile(suffix=f".{export_fmt_h}") as tmp:
+                    viz.export_figure(fig_hist, Path(tmp.name))
+                    tmp.seek(0)
+                    st.download_button(
+                        "Download Histogram",
+                        data=tmp.read(),
+                        file_name=f"histogram.{export_fmt_h}",
+                        mime=f"image/{export_fmt_h}",
+                    )
+
+        st.subheader("Box Plot")
+        with st.expander("Create Box Plot"):
+            x_col = st.selectbox(
+                "X Column",
+                options=data.columns.tolist(),
+                key="box_x",
+            )
+            num_cols = data.select_dtypes(include="number").columns.tolist()
+            y_col = st.selectbox(
+                "Y Column",
+                options=num_cols,
+                key="box_y",
+            )
+            export_fmt_b = st.selectbox(
+                "Export Format",
+                ["png", "jpg"],
+                key="box_fmt",
+            )
+            if st.button("Generate Box Plot") and x_col and y_col:
+                fig_box = viz.box_plot(data, x=x_col, y=y_col)
+                st.plotly_chart(fig_box, use_container_width=True)
+                with tempfile.NamedTemporaryFile(suffix=f".{export_fmt_b}") as tmp:
+                    viz.export_figure(fig_box, Path(tmp.name))
+                    tmp.seek(0)
+                    st.download_button(
+                        "Download Box Plot",
+                        data=tmp.read(),
+                        file_name=f"box_plot.{export_fmt_b}",
+                        mime=f"image/{export_fmt_b}",
+                    )
+
+        st.subheader("Violin Plot")
+        with st.expander("Create Violin Plot"):
+            x_col_v = st.selectbox(
+                "X Column",
+                options=data.columns.tolist(),
+                key="violin_x",
+            )
+            num_cols = data.select_dtypes(include="number").columns.tolist()
+            y_col_v = st.selectbox(
+                "Y Column",
+                options=num_cols,
+                key="violin_y",
+            )
+            export_fmt_v = st.selectbox(
+                "Export Format",
+                ["png", "jpg"],
+                key="violin_fmt",
+            )
+            if st.button("Generate Violin Plot") and x_col_v and y_col_v:
+                fig_violin = viz.violin_plot(data, x=x_col_v, y=y_col_v)
+                st.plotly_chart(fig_violin, use_container_width=True)
+                with tempfile.NamedTemporaryFile(suffix=f".{export_fmt_v}") as tmp:
+                    viz.export_figure(fig_violin, Path(tmp.name))
+                    tmp.seek(0)
+                    st.download_button(
+                        "Download Violin Plot",
+                        data=tmp.read(),
+                        file_name=f"violin_plot.{export_fmt_v}",
+                        mime=f"image/{export_fmt_v}",
+                    )
+
+        st.subheader("Heatmap")
+        with st.expander("Create Heatmap"):
+            heat_cols = st.multiselect(
+                "Columns",
+                options=data.select_dtypes(include="number").columns.tolist(),
+                default=data.select_dtypes(include="number").columns.tolist(),
+                key="heat_cols",
+            )
+            export_fmt_hm = st.selectbox(
+                "Export Format",
+                ["png", "jpg"],
+                key="heat_fmt",
+            )
+            if st.button("Generate Heatmap") and heat_cols:
+                fig_heat = viz.heatmap(data[heat_cols])
+                st.plotly_chart(fig_heat, use_container_width=True)
+                with tempfile.NamedTemporaryFile(suffix=f".{export_fmt_hm}") as tmp:
+                    viz.export_figure(fig_heat, Path(tmp.name))
+                    tmp.seek(0)
+                    st.download_button(
+                        "Download Heatmap",
+                        data=tmp.read(),
+                        file_name=f"heatmap.{export_fmt_hm}",
+                        mime=f"image/{export_fmt_hm}",
                     )
 
         st.subheader("Insights")
