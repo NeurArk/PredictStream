@@ -6,39 +6,39 @@ from utils import data
 
 
 def test_load_data_csv(tmp_path):
-    df_exp = pd.DataFrame({'a': [1, 2], 'b': [3, 4]})
-    csv_file = tmp_path / 'test.csv'
+    df_exp = pd.DataFrame({"a": [1, 2], "b": [3, 4]})
+    csv_file = tmp_path / "test.csv"
     df_exp.to_csv(csv_file, index=False)
     df = data.load_data(csv_file)
     pd.testing.assert_frame_equal(df, df_exp)
 
 
 def test_load_data_excel(tmp_path):
-    df_exp = pd.DataFrame({'a': [1, 2]})
-    xls_file = tmp_path / 'test.xlsx'
+    df_exp = pd.DataFrame({"a": [1, 2]})
+    xls_file = tmp_path / "test.xlsx"
     df_exp.to_excel(xls_file, index=False)
     df = data.load_data(xls_file)
     pd.testing.assert_frame_equal(df, df_exp)
 
 
 def test_load_data_invalid(tmp_path):
-    file = tmp_path / 'bad.txt'
-    file.write_text('x')
+    file = tmp_path / "bad.txt"
+    file.write_text("x")
     with pytest.raises(ValueError):
         data.load_data(file)
 
 
 def test_convert_dtypes():
-    df = pd.DataFrame({'num': ['1', '2'], 'date': ['2020-01-01', '2020-01-02']})
+    df = pd.DataFrame({"num": ["1", "2"], "date": ["2020-01-01", "2020-01-02"]})
     conv = data.convert_dtypes(df)
-    assert conv['num'].dtype.kind in {'i', 'f'}
-    assert pd.api.types.is_datetime64_any_dtype(conv['date'])
+    assert conv["num"].dtype.kind in {"i", "f"}
+    assert pd.api.types.is_datetime64_any_dtype(conv["date"])
 
 
 def test_data_summary():
-    df = pd.DataFrame({'a': [1, 2, 3]})
+    df = pd.DataFrame({"a": [1, 2, 3]})
     summary = data.data_summary(df)
-    assert 'a' in summary.columns
+    assert "a" in summary.columns
 
 
 def test_sample_dataset_loads():
@@ -98,3 +98,21 @@ def test_upload_data_to_session(monkeypatch, tmp_path):
     data.upload_data_to_session("Upload", session_key="foo")
     pd.testing.assert_frame_equal(st.session_state["foo"], df)
 
+
+def test_validate_file_size_raises(tmp_path):
+    file = tmp_path / "big.csv"
+    file.write_bytes(b"x" * 10)
+    with pytest.raises(ValueError):
+        data.validate_file_size(file, max_mb=0)
+
+
+def test_process_uploaded_file_too_large(tmp_path):
+    import streamlit as st
+
+    df = pd.DataFrame({"a": [1]})
+    file = tmp_path / "big.csv"
+    df.to_csv(file, index=False)
+    st.session_state.clear()
+    result = data.process_uploaded_file(file, session_key="up", max_size_mb=0)
+    assert result is None
+    assert "up" not in st.session_state

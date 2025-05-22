@@ -195,6 +195,11 @@ After completing a milestone, create a pull request with your changes for review
 - [x] Provide wrapper storing uploaded data in `st.session_state`
 - [x] Replace repetitive upload code across pages
 
+## PR19: File Size Validation
+
+- [x] Enforce maximum file size during upload
+- [x] Add tests covering oversized file uploads
+
 ## Notes for Development
 
 - Create comprehensive commit messages that clearly describe changes
