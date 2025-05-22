@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 import tempfile
+import logging
 
 import pandas as pd
 import streamlit as st
@@ -441,6 +442,9 @@ def classification_training_section(data: pd.DataFrame) -> None:
                     )
         except Exception as exc:  # pragma: no cover - training can fail for many reasons
             progress.progress(0)
+            logging.getLogger(__name__).exception(
+                "Classification training failed: %s", exc
+            )
             st.error(f"Classification training failed: {exc}")
 
     st.subheader("Detected Problem Type")
@@ -637,6 +641,9 @@ def regression_training_section(data: pd.DataFrame) -> None:
                     )
         except Exception as exc:  # pragma: no cover - training can fail for many reasons
             progress_r.progress(0)
+            logging.getLogger(__name__).exception(
+                "Regression training failed: %s", exc
+            )
             st.error(f"Regression training failed: {exc}")
 
     if st.button("Compare Regression Models") and feature_cols_r:

@@ -10,6 +10,7 @@ from . import eval
 from . import predict
 from . import ui
 from . import transform
+from . import logging
 
 __all__ = [
     "config",
@@ -22,4 +23,5 @@ __all__ = [
     "predict",
     "ui",
     "transform",
+    "logging",
 ]

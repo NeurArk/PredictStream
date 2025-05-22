@@ -10,6 +10,9 @@ import pandas as pd
 import streamlit as st
 
 from utils import model, predict, ui
+from utils.logging import configure_logging
+
+configure_logging()
 
 st.set_page_config(page_title="Modeling", layout="wide")
 

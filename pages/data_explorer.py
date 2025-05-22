@@ -6,6 +6,10 @@ from utils import data as data_utils
 from utils import eda
 from utils import ui
 from utils import components
+import logging
+from utils.logging import configure_logging
+
+configure_logging()
 
 
 
@@ -47,6 +51,9 @@ def main() -> None:
                     )
                     st.success(f"{name} loaded!")
                 except (ValueError, TypeError) as exc:
+                    logging.getLogger(__name__).error(
+                        "Failed to load sample data %s: %s", name, exc
+                    )
                     st.error(f"Failed to load sample data: {exc}")
 
         with st.expander("Help"):

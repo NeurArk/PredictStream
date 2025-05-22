@@ -11,6 +11,9 @@ import streamlit as st
 from utils import data as data_utils
 from utils import eda
 from utils import ui
+from utils.logging import configure_logging
+
+configure_logging()
 
 st.set_page_config(page_title="Report", layout="wide")
 
