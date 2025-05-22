@@ -11,3 +11,7 @@ def test_sample_files_exist():
 def test_app_importable():
     app = import_module("app")
     assert hasattr(app, "main")
+
+
+def test_logo_exists():
+    assert config.LOGO_PATH.exists(), "Logo file missing"

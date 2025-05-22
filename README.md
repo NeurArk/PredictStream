@@ -12,6 +12,7 @@ An interactive Streamlit dashboard for data exploration and predictive analytics
   - Regression (Linear Regression, Decision Trees)
 - **Feature Importance**: Understand which variables drive your predictions
 - **Result Export**: Download visualizations and predictions
+- **Branding**: NeurArk colors and logo for a polished look
 
 ## 📋 Requirements
 
@@ -38,8 +39,8 @@ streamlit run app.py
 ## 📊 Usage
 
 1. Launch the application with `streamlit run app.py`
-2. Upload your dataset
-3. Explore your data with the visualization tools
+2. Use the sidebar links to open the Data Explorer page
+3. Upload your dataset and generate visualizations
 4. Select features and target variables for modeling
 5. Choose and configure machine learning algorithms
 6. Train models and view performance metrics
