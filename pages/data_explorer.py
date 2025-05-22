@@ -17,13 +17,7 @@ def main() -> None:
     """Render the data exploration and modeling page."""
     ui.apply_branding()
     st.title("Data Explorer")
-    theme = st.sidebar.selectbox(
-        "Theme",
-        ["Light", "Dark"],
-        help="Toggle interface theme",
-        key="theme",
-    )
-    st.markdown(ui.get_theme_css(theme), unsafe_allow_html=True)
+    ui.apply_theme()
 
     with st.expander("Getting Started"):
         st.markdown(ui.getting_started_markdown())

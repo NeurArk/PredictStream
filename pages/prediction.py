@@ -22,6 +22,7 @@ def main() -> None:
     """Render the prediction page."""
     ui.apply_branding()
     st.title("Prediction")
+    ui.apply_theme()
 
     with st.sidebar:
         mode = st.radio("Mode", ["Single", "Batch"], key="pred_mode")

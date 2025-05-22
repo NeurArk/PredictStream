@@ -22,6 +22,7 @@ def main() -> None:
     """Render the report generation page."""
     ui.apply_branding()
     st.title("Report Generator")
+    ui.apply_theme()
 
     with st.sidebar:
         data_utils.upload_data_to_session(

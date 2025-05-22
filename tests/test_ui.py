@@ -4,8 +4,11 @@ from utils import ui
 
 
 def test_get_theme_css():
-    css = ui.get_theme_css("Dark")
-    assert "background-color" in css
+    light = ui.get_theme_css("Light")
+    dark = ui.get_theme_css("Dark")
+    for css in (light, dark):
+        assert "stSidebar" in css
+        assert "plotly-chart" in css
 
 
 def test_getting_started_markdown():
