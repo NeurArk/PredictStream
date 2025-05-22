@@ -180,6 +180,7 @@ After completing a milestone, create a pull request with your changes for review
 
 - [x] Integrated evaluation metrics and plots into the Data Explorer page
 - [x] Implemented modeling page with model selection, training, cross-validation, and export functionality
+- [x] Added histogram, box plot, violin plot, and heatmap UI with export options
 
 ## PR17: Robust Error Handling
 

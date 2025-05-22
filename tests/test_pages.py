@@ -67,6 +67,15 @@ def test_modeling_page_widgets_exist():
     assert "export_model" in content
 
 
+def test_data_explorer_visualization_widgets_exist():
+    with open("pages/data_explorer.py", "r", encoding="utf-8") as f:
+        content = f.read()
+    assert "Generate Histogram" in content
+    assert "Generate Box Plot" in content
+    assert "Generate Violin Plot" in content
+    assert "Generate Heatmap" in content
+
+
 def test_time_series_page_runs(monkeypatch):
     import streamlit as st
     from pages import time_series

@@ -48,10 +48,15 @@ def test_heatmap():
 
 def test_export_figure(tmp_path):
     df = sample_df()
-    fig = viz.bar_chart(df, 'cat', 'num1')
-    out = tmp_path / 'chart.html'
-    viz.export_figure(fig, out)
-    assert out.exists() and out.stat().st_size > 0
+    fig_bar = viz.bar_chart(df, 'cat', 'num1')
+    out_bar = tmp_path / 'chart.html'
+    viz.export_figure(fig_bar, out_bar)
+    assert out_bar.exists() and out_bar.stat().st_size > 0
+
+    fig_hist = viz.histogram(df, 'num1')
+    out_hist = tmp_path / 'hist.html'
+    viz.export_figure(fig_hist, out_hist)
+    assert out_hist.exists() and out_hist.stat().st_size > 0
 
 
 def test_pair_plot_and_image_export(tmp_path):
