@@ -33,9 +33,12 @@ def main() -> None:
             model_obj = predict.load_model(Path(tmp.name))
 
     if data_file is not None:
-        df = data_utils.load_data(data_file)
-        df = data_utils.convert_dtypes(df)
-        st.session_state["pred_data"] = df
+        try:
+            df = data_utils.load_data(data_file)
+            df = data_utils.convert_dtypes(df)
+            st.session_state["pred_data"] = df
+        except (ValueError, TypeError) as exc:
+            st.error(f"Failed to load data: {exc}")
 
     data = st.session_state.get("pred_data")
 

@@ -45,14 +45,17 @@ def main() -> None:
         st.subheader("Sample Datasets")
         for name, path in config.SAMPLE_DATASETS.items():
             if st.button(f"Load {name}"):
-                st.session_state["data"] = data_utils.load_data(path)
-                st.session_state["data"] = data_utils.convert_dtypes(
-                    st.session_state["data"]
-                )
-                st.session_state["datetime_cols"] = eda.detect_datetime_columns(
-                    st.session_state["data"]
-                )
-                st.success(f"{name} loaded!")
+                try:
+                    st.session_state["data"] = data_utils.load_data(path)
+                    st.session_state["data"] = data_utils.convert_dtypes(
+                        st.session_state["data"]
+                    )
+                    st.session_state["datetime_cols"] = eda.detect_datetime_columns(
+                        st.session_state["data"]
+                    )
+                    st.success(f"{name} loaded!")
+                except (ValueError, TypeError) as exc:
+                    st.error(f"Failed to load sample data: {exc}")
 
         with st.expander("Help"):
             st.markdown(ui.help_markdown())
@@ -64,7 +67,7 @@ def main() -> None:
             st.session_state["data"] = df
             st.session_state["datetime_cols"] = eda.detect_datetime_columns(df)
             st.success("File loaded successfully!")
-        except ValueError as exc:
+        except (ValueError, TypeError) as exc:
             st.error(f"Failed to load file: {exc}")
 
     data = st.session_state.get("data")
@@ -171,23 +174,27 @@ def main() -> None:
             )
         if st.button("Apply Transformations"):
             df_trans = data.copy()
-            if missing_strategy == "Drop rows":
-                df_trans = transform.handle_missing_values(df_trans, strategy="drop")
-            elif missing_strategy == "Fill Mean":
-                df_trans = transform.handle_missing_values(df_trans, strategy="mean")
-            elif missing_strategy == "Fill Median":
-                df_trans = transform.handle_missing_values(df_trans, strategy="median")
-            elif missing_strategy == "Fill Mode":
-                df_trans = transform.handle_missing_values(df_trans, strategy="mode")
-            if encode_cols:
-                method = "onehot" if encode_method == "One-Hot" else "label"
-                df_trans = transform.encode_features(df_trans, encode_cols, method=method)
-            if scale_cols:
-                method = "standard" if scale_method == "Standard" else "minmax"
-                df_trans = transform.scale_features(df_trans, scale_cols, method=method)
-            st.session_state["data"] = df_trans
-            data = df_trans
-            st.success("Transformations applied!")
+            try:
+                if missing_strategy == "Drop rows":
+                    df_trans = transform.handle_missing_values(df_trans, strategy="drop")
+                elif missing_strategy == "Fill Mean":
+                    df_trans = transform.handle_missing_values(df_trans, strategy="mean")
+                elif missing_strategy == "Fill Median":
+                    df_trans = transform.handle_missing_values(df_trans, strategy="median")
+                elif missing_strategy == "Fill Mode":
+                    df_trans = transform.handle_missing_values(df_trans, strategy="mode")
+                if encode_cols:
+                    method = "onehot" if encode_method == "One-Hot" else "label"
+                    df_trans = transform.encode_features(df_trans, encode_cols, method=method)
+                if scale_cols:
+                    method = "standard" if scale_method == "Standard" else "minmax"
+                    df_trans = transform.scale_features(df_trans, scale_cols, method=method)
+            except (ValueError, KeyError, TypeError) as exc:
+                st.error(f"Transformation error: {exc}")
+            else:
+                st.session_state["data"] = df_trans
+                data = df_trans
+                st.success("Transformations applied!")
 
         st.subheader("Model Training - Classification")
         target = st.selectbox(
