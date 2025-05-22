@@ -165,9 +165,9 @@ After completing a milestone, create a pull request with your changes for review
 
 ## PR15: Time Series Analysis
 
-- [ ] Detect datetime columns and offer time series plotting tools
-- [ ] Implement decomposition plots for trend/seasonality analysis
-- [ ] Write tests for time series detection and visualization
+- [x] Detect datetime columns and offer time series plotting tools
+- [x] Implement decomposition plots for trend/seasonality analysis
+- [x] Write tests for time series detection and visualization
 
 ## PR16: Dedicated Prediction & Report Pages
 

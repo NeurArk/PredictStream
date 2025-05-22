@@ -12,6 +12,7 @@ An interactive Streamlit dashboard for data exploration and predictive analytics
   - Classification (Logistic Regression, Random Forest, XGBoost)
   - Regression (Linear Regression, Decision Trees, XGBoost)
 - **Feature Importance**: Understand which variables drive your predictions
+- **Time Series Analysis**: Plot time-based data and view trend/seasonality
 - **Result Export**: Download visualizations and predictions
 - **Branding**: NeurArk colors and logo for a polished look
 

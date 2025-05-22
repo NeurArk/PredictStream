@@ -17,6 +17,7 @@ from sklearn.metrics import (
 )
 import matplotlib.pyplot as plt
 import shap
+from .eda import naive_seasonal_decompose
 
 
 def histogram(
@@ -228,4 +229,41 @@ def shap_summary_plot(model, X: pd.DataFrame, *, title: Optional[str] = None):
     fig = plt.gcf()
     if title:
         fig.suptitle(title)
+    return fig
+
+
+def time_series_plot(
+    df: pd.DataFrame,
+    time_col: str,
+    value_col: str,
+    *,
+    title: Optional[str] = None,
+) -> go.Figure:
+    """Return a line plot for a time series."""
+    plot_df = df.sort_values(time_col)
+    fig = px.line(plot_df, x=time_col, y=value_col, title=title)
+    return fig
+
+
+def decomposition_plot(
+    series: pd.Series,
+    *,
+    period: int,
+    title: Optional[str] = None,
+) -> plt.Figure:
+    """Return a basic additive decomposition plot."""
+    parts = naive_seasonal_decompose(series, period)
+    fig, axes = plt.subplots(4, 1, figsize=(8, 6), sharex=True)
+    axes[0].plot(series.index, series.values)
+    axes[0].set_title("Observed")
+    axes[1].plot(series.index, parts["trend"].values)
+    axes[1].set_title("Trend")
+    axes[2].plot(series.index, parts["seasonal"].values)
+    axes[2].set_title("Seasonality")
+    axes[3].plot(series.index, parts["resid"].values)
+    axes[3].set_title("Residual")
+    plt.tight_layout()
+    if title:
+        fig.suptitle(title)
+        fig.tight_layout()
     return fig

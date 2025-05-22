@@ -105,3 +105,18 @@ def data_insights_summary(df: pd.DataFrame) -> List[str]:
     if not insights:
         insights.append("No notable data issues detected.")
     return insights
+
+
+def detect_datetime_columns(df: pd.DataFrame) -> List[str]:
+    """Return a list of columns with datetime dtype."""
+    return [col for col in df.columns if pd.api.types.is_datetime64_any_dtype(df[col])]
+
+
+def naive_seasonal_decompose(series: pd.Series, period: int) -> Dict[str, pd.Series]:
+    """Perform a simple additive decomposition using rolling mean."""
+    trend = series.rolling(window=period, center=True, min_periods=1).mean()
+    detrended = series - trend
+    idx = np.arange(len(series))
+    seasonal = detrended.groupby(idx % period).transform("mean")
+    resid = series - trend - seasonal
+    return {"trend": trend, "seasonal": seasonal, "resid": resid}

@@ -64,3 +64,14 @@ def test_pair_plot_and_image_export(tmp_path):
     viz.export_figure(fig, jpg)
     assert png.exists() and png.stat().st_size > 0
     assert jpg.exists() and jpg.stat().st_size > 0
+
+
+def test_time_series_and_decomposition_plots(tmp_path):
+    df = pd.DataFrame({
+        "date": pd.date_range("2021-01-01", periods=8, freq="D"),
+        "value": range(8),
+    })
+    ts_fig = viz.time_series_plot(df, "date", "value", title="TS")
+    assert ts_fig.layout.title.text == "TS"
+    dec_fig = viz.decomposition_plot(df["value"], period=2, title="Dec")
+    assert isinstance(dec_fig, plt.Figure)
