@@ -68,7 +68,7 @@ def test_modeling_page_widgets_exist():
 
 
 def test_data_explorer_visualization_widgets_exist():
-    with open("pages/data_explorer.py", "r", encoding="utf-8") as f:
+    with open("utils/components.py", "r", encoding="utf-8") as f:
         content = f.read()
     assert "Generate Histogram" in content
     assert "Generate Box Plot" in content
