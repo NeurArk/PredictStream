@@ -321,6 +321,7 @@ def main() -> None:
                 st.error(f"Transformation error: {exc}")
             else:
                 st.session_state["data"] = df_trans
+                st.session_state["datetime_cols"] = eda.detect_datetime_columns(df_trans)
                 data = df_trans
                 st.success("Transformations applied!")
 
