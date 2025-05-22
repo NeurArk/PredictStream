@@ -176,6 +176,10 @@ After completing a milestone, create a pull request with your changes for review
 - [x] Ensure navigation links include new pages
 - [x] Write integration tests for prediction and report pages
 
+## Additional Updates
+
+- [x] Integrated evaluation metrics and plots into the Data Explorer page
+
 ## Notes for Development
 
 - Create comprehensive commit messages that clearly describe changes

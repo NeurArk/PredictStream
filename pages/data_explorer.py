@@ -8,6 +8,7 @@ from utils import model
 from utils import transform
 from utils import ui
 from utils import viz
+from utils import eval as evaluation
 from pathlib import Path
 import tempfile
 from sklearn.linear_model import LinearRegression
@@ -294,6 +295,80 @@ def main() -> None:
                 progress.progress(100)
                 st.write("Cross-validation scores:", scores)
                 st.write("Mean accuracy:", float(scores.mean()))
+
+                # evaluate on hold-out test set
+                y_pred = clf.predict(X_test)
+                metrics = evaluation.performance_metrics(
+                    y_test, y_pred, problem_type="classification"
+                )
+                st.subheader("Test Metrics")
+                st.json(metrics)
+
+                fig_cm = viz.confusion_matrix_plot(y_test, y_pred)
+                st.plotly_chart(fig_cm, use_container_width=True)
+                with tempfile.NamedTemporaryFile(suffix=".png") as tmp:
+                    viz.export_figure(fig_cm, Path(tmp.name))
+                    tmp.seek(0)
+                    st.download_button(
+                        "Download Confusion Matrix",
+                        data=tmp.read(),
+                        file_name="confusion_matrix.png",
+                        mime="image/png",
+                    )
+
+                if hasattr(clf, "predict_proba"):
+                    y_score = clf.predict_proba(X_test)[:, 1]
+                else:
+                    y_score = clf.decision_function(X_test)
+                fig_roc = viz.roc_curve_plot(y_test, y_score)
+                st.plotly_chart(fig_roc, use_container_width=True)
+                with tempfile.NamedTemporaryFile(suffix=".png") as tmp:
+                    viz.export_figure(fig_roc, Path(tmp.name))
+                    tmp.seek(0)
+                    st.download_button(
+                        "Download ROC Curve",
+                        data=tmp.read(),
+                        file_name="roc_curve.png",
+                        mime="image/png",
+                    )
+
+                fig_pr = viz.precision_recall_curve_plot(y_test, y_score)
+                st.plotly_chart(fig_pr, use_container_width=True)
+                with tempfile.NamedTemporaryFile(suffix=".png") as tmp:
+                    viz.export_figure(fig_pr, Path(tmp.name))
+                    tmp.seek(0)
+                    st.download_button(
+                        "Download PR Curve",
+                        data=tmp.read(),
+                        file_name="pr_curve.png",
+                        mime="image/png",
+                    )
+
+                if st.checkbox("Show Feature Importance"):
+                    fig_imp = viz.feature_importance_plot(clf, feature_cols)
+                    st.plotly_chart(fig_imp, use_container_width=True)
+                    with tempfile.NamedTemporaryFile(suffix=".png") as tmp:
+                        viz.export_figure(fig_imp, Path(tmp.name))
+                        tmp.seek(0)
+                        st.download_button(
+                            "Download Feature Importance",
+                            data=tmp.read(),
+                            file_name="feature_importance.png",
+                            mime="image/png",
+                        )
+
+                if st.checkbox("Show SHAP Summary"):
+                    shap_fig = viz.shap_summary_plot(clf, X_train)
+                    st.pyplot(shap_fig)
+                    with tempfile.NamedTemporaryFile(suffix=".png") as tmp:
+                        viz.export_figure(shap_fig, Path(tmp.name))
+                        tmp.seek(0)
+                        st.download_button(
+                            "Download SHAP Summary",
+                            data=tmp.read(),
+                            file_name="shap_summary.png",
+                            mime="image/png",
+                        )
             except Exception as exc:
                 progress.progress(0)
                 st.error(f"Classification training failed: {exc}")
@@ -430,6 +505,63 @@ def main() -> None:
                 progress_r.progress(100)
                 st.write("CV scores:", scores)
                 st.write("Mean R2:", float(scores.mean()))
+
+                preds = reg.predict(X_test)
+                metrics = evaluation.performance_metrics(
+                    y_test, preds, problem_type="regression"
+                )
+                st.subheader("Test Metrics")
+                st.json(metrics)
+
+                fig_avp = viz.actual_vs_predicted_plot(y_test, preds)
+                st.plotly_chart(fig_avp, use_container_width=True)
+                with tempfile.NamedTemporaryFile(suffix=".png") as tmp:
+                    viz.export_figure(fig_avp, Path(tmp.name))
+                    tmp.seek(0)
+                    st.download_button(
+                        "Download Actual vs Predicted",
+                        data=tmp.read(),
+                        file_name="actual_vs_predicted.png",
+                        mime="image/png",
+                    )
+
+                fig_resid = viz.residual_plot(y_test, preds)
+                st.plotly_chart(fig_resid, use_container_width=True)
+                with tempfile.NamedTemporaryFile(suffix=".png") as tmp:
+                    viz.export_figure(fig_resid, Path(tmp.name))
+                    tmp.seek(0)
+                    st.download_button(
+                        "Download Residual Plot",
+                        data=tmp.read(),
+                        file_name="residuals.png",
+                        mime="image/png",
+                    )
+
+                if st.checkbox("Show Feature Importance", key="fi_reg"):
+                    fig_imp_r = viz.feature_importance_plot(reg, feature_cols_r)
+                    st.plotly_chart(fig_imp_r, use_container_width=True)
+                    with tempfile.NamedTemporaryFile(suffix=".png") as tmp:
+                        viz.export_figure(fig_imp_r, Path(tmp.name))
+                        tmp.seek(0)
+                        st.download_button(
+                            "Download Feature Importance",
+                            data=tmp.read(),
+                            file_name="feature_importance_reg.png",
+                            mime="image/png",
+                        )
+
+                if st.checkbox("Show SHAP Summary", key="shap_reg"):
+                    shap_fig_r = viz.shap_summary_plot(reg, X_train)
+                    st.pyplot(shap_fig_r)
+                    with tempfile.NamedTemporaryFile(suffix=".png") as tmp:
+                        viz.export_figure(shap_fig_r, Path(tmp.name))
+                        tmp.seek(0)
+                        st.download_button(
+                            "Download SHAP Summary",
+                            data=tmp.read(),
+                            file_name="shap_summary_reg.png",
+                            mime="image/png",
+                        )
             except Exception as exc:
                 progress_r.progress(0)
                 st.error(f"Regression training failed: {exc}")
