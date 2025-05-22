@@ -207,6 +207,12 @@ After completing a milestone, create a pull request with your changes for review
 - [x] Add global theme toggle stored in session state
 - [x] Update tests to verify theme CSS output
 
+## PR21: Forecasting Models
+
+- [x] Create utils/time_series.py with ARIMA and naive forecast functions
+- [x] Add UI controls on Time Series page for model selection and forecast horizon
+- [x] Write tests for forecasting utilities
+
 ## Notes for Development
 
 - Create comprehensive commit messages that clearly describe changes
