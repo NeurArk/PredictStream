@@ -2,6 +2,9 @@
 
 import streamlit as st
 from utils import ui
+from utils.logging import configure_logging
+
+configure_logging()
 
 st.set_page_config(page_title="PredictStream", layout="wide")
 

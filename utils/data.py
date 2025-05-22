@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 from typing import Any, Iterable
+import logging
 
 MAX_UPLOAD_SIZE_MB = 100
 
@@ -37,7 +38,8 @@ def validate_file_size(file: Any, max_mb: int = MAX_UPLOAD_SIZE_MB) -> int:
             else:
                 path = Path(getattr(file, "name"))
             size = path.stat().st_size
-        except OSError:
+        except OSError as exc:
+            logging.getLogger(__name__).warning("Could not determine file size: %s", exc)
             size = None
     if size is not None and size > limit:
         raise ValueError(f"File size {size} exceeds limit of {limit} bytes")
@@ -60,6 +62,7 @@ def load_data(file: Any) -> pd.DataFrame:
         path = Path(str(file))
         ext = path.suffix.lower()
         if not path.exists():
+            logging.getLogger(__name__).error("Invalid file path: %s", path)
             raise ValueError("Invalid file path")
 
     try:
@@ -68,7 +71,9 @@ def load_data(file: Any) -> pd.DataFrame:
         if ext in {".xls", ".xlsx"}:
             return pd.read_excel(file)
     except Exception as exc:  # pragma: no cover - pass through
+        logging.getLogger(__name__).exception("Failed to read file: %s", exc)
         raise ValueError(f"Failed to read file: {exc}") from exc
+    logging.getLogger(__name__).error("Unsupported file type: %s", ext)
     raise ValueError(f"Unsupported file type: {ext}")
 
 
@@ -104,9 +109,11 @@ def validate_file_type(file: Any, allowed_types: Iterable[str]) -> str:
         path = Path(str(file))
         ext = path.suffix.lower()
         if not path.exists():
+            logging.getLogger(__name__).error("Invalid file path: %s", path)
             raise ValueError("Invalid file path")
 
     if ext not in {f".{t.lstrip('.').lower()}" for t in allowed_types}:
+        logging.getLogger(__name__).error("Unsupported file type: %s", ext)
         raise ValueError(f"Unsupported file type: {ext}")
     return ext
 
@@ -128,6 +135,7 @@ def process_uploaded_file(
         df = load_data(uploaded_file)
         df = convert_dtypes(df)
     except (ValueError, TypeError) as exc:  # pragma: no cover - tested via wrapper
+        logging.getLogger(__name__).error("Failed to load uploaded file: %s", exc)
         st.error(f"Failed to load file: {exc}")
         return None
     st.session_state[session_key] = df

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 from typing import Optional
+import logging
 
 import pandas as pd
 import plotly.express as px
@@ -135,20 +136,26 @@ def export_figure(fig: object, path: Path) -> None:
         if isinstance(fig, go.Figure):
             fig.write_html(str(path))
         else:
+            logging.getLogger(__name__).error("HTML export requires a Plotly figure")
             raise ValueError("HTML export requires a Plotly figure")
     elif ext in {".png", ".jpg", ".jpeg"}:
         if isinstance(fig, go.Figure):
             try:
                 fig.write_image(str(path))
             except ValueError as exc:
+                logging.getLogger(__name__).exception(
+                    "Static image export failed: %s", exc
+                )
                 raise RuntimeError(
                     "Static image export requires the kaleido package"
                 ) from exc
         elif isinstance(fig, plt.Figure):
             fig.savefig(path)
         else:
+            logging.getLogger(__name__).error("Unsupported figure type for image export")
             raise ValueError("Unsupported figure type for image export")
     else:
+        logging.getLogger(__name__).error("Unsupported export format: %s", ext)
         raise ValueError(f"Unsupported export format: {ext}")
 
 
