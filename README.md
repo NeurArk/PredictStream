@@ -7,6 +7,7 @@ An interactive Streamlit dashboard for data exploration and predictive analytics
 - **Data Import**: Upload CSV/Excel files
 - **Interactive Visualizations**: Create histograms, scatter plots, correlation matrices, and more
 - **Automated EDA**: Get instant statistical summaries and data quality assessments
+- **Data Transformation**: Handle missing values, encode categories, and scale features
 - **Predictive Modeling**: Train and evaluate machine learning models
   - Classification (Logistic Regression, Random Forest)
   - Regression (Linear Regression, Decision Trees)
