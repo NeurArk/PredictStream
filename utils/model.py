@@ -8,6 +8,7 @@ from typing import Callable, Dict, Tuple
 
 import pandas as pd
 import numpy as np
+import streamlit as st
 from joblib import dump
 from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.linear_model import LogisticRegression, LinearRegression
@@ -66,6 +67,7 @@ def train_test_split_data(
     )
 
 
+@st.cache_resource
 @cache_model
 def train_logistic_regression(
     X: pd.DataFrame,
@@ -80,6 +82,7 @@ def train_logistic_regression(
     return model
 
 
+@st.cache_resource
 @cache_model
 def train_random_forest_classifier(
     X: pd.DataFrame,
@@ -99,6 +102,7 @@ def train_random_forest_classifier(
     return model
 
 
+@st.cache_resource
 @cache_model
 def train_xgboost_classifier(
     X: pd.DataFrame,
@@ -143,6 +147,7 @@ def detect_problem_type(y: pd.Series) -> str:
     return "classification"
 
 
+@st.cache_resource
 @cache_model
 def train_linear_regression(
     X: pd.DataFrame,
@@ -154,6 +159,7 @@ def train_linear_regression(
     return model
 
 
+@st.cache_resource
 @cache_model
 def train_decision_tree_regressor(
     X: pd.DataFrame,
@@ -168,6 +174,7 @@ def train_decision_tree_regressor(
     return model
 
 
+@st.cache_resource
 @cache_model
 def train_random_forest_regressor(
     X: pd.DataFrame,
@@ -187,6 +194,7 @@ def train_random_forest_regressor(
     return model
 
 
+@st.cache_resource
 @cache_model
 def train_xgboost_regressor(
     X: pd.DataFrame,

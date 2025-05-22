@@ -66,6 +66,15 @@ def test_model_caching():
     assert first is second
 
 
+def test_training_function_caching():
+    df = sample_reg_df()
+    X = df.drop(columns=["target"])
+    y = df["target"]
+    first = model.train_linear_regression(X, y)
+    second = model.train_linear_regression(X, y)
+    assert first is second
+
+
 def test_regression_training_functions():
     df = sample_reg_df()
     X_train, X_test, y_train, y_test = model.train_test_split_data(df, "target")

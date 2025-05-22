@@ -182,6 +182,34 @@ def visualization_section(data: pd.DataFrame) -> None:
         st.write(f"- {insight}")
 
 
+@st.cache_resource
+def _cached_transformations(
+    df: pd.DataFrame,
+    missing_strategy: str,
+    encode_cols: tuple[str, ...],
+    encode_method: str,
+    scale_cols: tuple[str, ...],
+    scale_method: str,
+) -> pd.DataFrame:
+    """Return transformed DataFrame with caching."""
+    df_trans = df.copy()
+    if missing_strategy == "Drop rows":
+        df_trans = transform.handle_missing_values(df_trans, strategy="drop")
+    elif missing_strategy == "Fill Mean":
+        df_trans = transform.handle_missing_values(df_trans, strategy="mean")
+    elif missing_strategy == "Fill Median":
+        df_trans = transform.handle_missing_values(df_trans, strategy="median")
+    elif missing_strategy == "Fill Mode":
+        df_trans = transform.handle_missing_values(df_trans, strategy="mode")
+    if encode_cols:
+        method = "onehot" if encode_method == "One-Hot" else "label"
+        df_trans = transform.encode_features(df_trans, list(encode_cols), method=method)
+    if scale_cols:
+        method = "standard" if scale_method == "Standard" else "minmax"
+        df_trans = transform.scale_features(df_trans, list(scale_cols), method=method)
+    return df_trans
+
+
 def transformation_section(data: pd.DataFrame) -> pd.DataFrame:
     """Provide UI to apply common data transformations."""
     st.subheader("Data Transformation")
@@ -207,22 +235,15 @@ def transformation_section(data: pd.DataFrame) -> pd.DataFrame:
             ["Standard", "Min-Max"],
         )
     if st.button("Apply Transformations"):
-        df_trans = data.copy()
         try:
-            if missing_strategy == "Drop rows":
-                df_trans = transform.handle_missing_values(df_trans, strategy="drop")
-            elif missing_strategy == "Fill Mean":
-                df_trans = transform.handle_missing_values(df_trans, strategy="mean")
-            elif missing_strategy == "Fill Median":
-                df_trans = transform.handle_missing_values(df_trans, strategy="median")
-            elif missing_strategy == "Fill Mode":
-                df_trans = transform.handle_missing_values(df_trans, strategy="mode")
-            if encode_cols:
-                method = "onehot" if encode_method == "One-Hot" else "label"
-                df_trans = transform.encode_features(df_trans, encode_cols, method=method)
-            if scale_cols:
-                method = "standard" if scale_method == "Standard" else "minmax"
-                df_trans = transform.scale_features(df_trans, scale_cols, method=method)
+            df_trans = _cached_transformations(
+                data,
+                missing_strategy,
+                tuple(encode_cols),
+                encode_method,
+                tuple(scale_cols),
+                scale_method,
+            )
         except (ValueError, KeyError, TypeError) as exc:
             st.error(f"Transformation error: {exc}")
         else:

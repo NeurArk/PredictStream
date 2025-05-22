@@ -67,3 +67,28 @@ def test_scale_features_non_numeric():
     df = sample_df().fillna({"cat": "b"})
     with pytest.raises(TypeError):
         transform.scale_features(df, ["cat"], method="standard")
+
+
+def test_cached_transformations_identical():
+    import streamlit as st
+    from utils import components
+
+    df = sample_df()
+    st.session_state.clear()
+    first = components._cached_transformations(
+        df,
+        "Fill Mean",
+        tuple(),
+        "One-Hot",
+        tuple(),
+        "Standard",
+    )
+    second = components._cached_transformations(
+        df,
+        "Fill Mean",
+        tuple(),
+        "One-Hot",
+        tuple(),
+        "Standard",
+    )
+    assert first is second
