@@ -112,6 +112,13 @@ def test_time_series_page_contents():
     assert "decomposition_plot" in content
 
 
+def test_time_series_page_forecast_widgets():
+    with open("pages/time_series.py", "r", encoding="utf-8") as f:
+        content = f.read()
+    assert "Forecast Model" in content
+    assert "Forecast Horizon" in content
+
+
 def test_datetime_cols_persist_after_transforms():
     import streamlit as st
     from utils import transform, eda
