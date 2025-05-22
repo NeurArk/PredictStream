@@ -46,3 +46,18 @@ def test_sample_dataset_loads():
         df = data.load_data(path)
         assert not df.empty
 
+
+def test_load_data_invalid_type():
+    with pytest.raises(ValueError):
+        data.load_data(123)
+
+
+def test_convert_dtypes_invalid():
+    with pytest.raises(TypeError):
+        data.convert_dtypes([1, 2, 3])
+
+
+def test_data_summary_empty():
+    with pytest.raises(ValueError):
+        data.data_summary(pd.DataFrame())
+

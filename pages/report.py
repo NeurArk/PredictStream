@@ -26,9 +26,12 @@ def main() -> None:
         )
 
     if data_file is not None:
-        df = data_utils.load_data(data_file)
-        df = data_utils.convert_dtypes(df)
-        st.session_state["report_data"] = df
+        try:
+            df = data_utils.load_data(data_file)
+            df = data_utils.convert_dtypes(df)
+            st.session_state["report_data"] = df
+        except (ValueError, TypeError) as exc:
+            st.error(f"Failed to load data: {exc}")
 
     df = st.session_state.get("report_data")
     if df is not None:

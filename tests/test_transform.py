@@ -55,3 +55,15 @@ def test_transformation_workflow():
     df = transform.scale_features(df, ["num"], method="minmax")
     assert df["num"].min() == 0
     assert "cat" in df.columns
+
+
+def test_encode_features_missing_column():
+    df = sample_df().fillna({"cat": "b"})
+    with pytest.raises(KeyError):
+        transform.encode_features(df, ["missing"], method="onehot")
+
+
+def test_scale_features_non_numeric():
+    df = sample_df().fillna({"cat": "b"})
+    with pytest.raises(TypeError):
+        transform.scale_features(df, ["cat"], method="standard")

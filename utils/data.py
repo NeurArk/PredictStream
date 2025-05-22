@@ -10,10 +10,16 @@ import pandas as pd
 
 def load_data(file: Any) -> pd.DataFrame:
     """Load a CSV or Excel file into a DataFrame."""
+    if file is None:
+        raise ValueError("No file provided")
+
     if hasattr(file, "name"):
         ext = Path(file.name).suffix.lower()
     else:
-        ext = Path(str(file)).suffix.lower()
+        path = Path(str(file))
+        ext = path.suffix.lower()
+        if not path.exists():
+            raise ValueError("Invalid file path")
 
     try:
         if ext == ".csv":
@@ -27,6 +33,8 @@ def load_data(file: Any) -> pd.DataFrame:
 
 def convert_dtypes(df: pd.DataFrame) -> pd.DataFrame:
     """Attempt to convert object columns to numeric or datetime."""
+    if not isinstance(df, pd.DataFrame):
+        raise TypeError("df must be a pandas DataFrame")
     for column in df.columns:
         if df[column].dtype == object:
             df[column] = pd.to_numeric(df[column], errors="ignore")
@@ -37,4 +45,8 @@ def convert_dtypes(df: pd.DataFrame) -> pd.DataFrame:
 
 def data_summary(df: pd.DataFrame) -> pd.DataFrame:
     """Return a statistical summary of the dataframe."""
+    if not isinstance(df, pd.DataFrame):
+        raise TypeError("df must be a pandas DataFrame")
+    if df.empty:
+        raise ValueError("DataFrame is empty")
     return df.describe(include="all")

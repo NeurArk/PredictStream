@@ -15,6 +15,8 @@ SCALING_METHODS = {"minmax", "standard"}
 
 def handle_missing_values(df: pd.DataFrame, *, strategy: str = "drop") -> pd.DataFrame:
     """Handle missing values according to the specified strategy."""
+    if not isinstance(df, pd.DataFrame):
+        raise TypeError("df must be a pandas DataFrame")
     if strategy not in MISSING_STRATEGIES:
         raise ValueError(f"Invalid strategy: {strategy}")
     if strategy == "drop":
@@ -40,6 +42,11 @@ def encode_features(
     method: str = "onehot",
 ) -> pd.DataFrame:
     """Encode categorical features using the given method."""
+    if not isinstance(df, pd.DataFrame):
+        raise TypeError("df must be a pandas DataFrame")
+    missing = set(columns) - set(df.columns)
+    if missing:
+        raise KeyError(f"Columns not found: {', '.join(missing)}")
     if method not in ENCODING_METHODS:
         raise ValueError(f"Invalid encoding method: {method}")
     df = df.copy()
@@ -58,6 +65,13 @@ def scale_features(
     method: str = "standard",
 ) -> pd.DataFrame:
     """Scale numeric features with the given method."""
+    if not isinstance(df, pd.DataFrame):
+        raise TypeError("df must be a pandas DataFrame")
+    missing = set(columns) - set(df.columns)
+    if missing:
+        raise KeyError(f"Columns not found: {', '.join(missing)}")
+    if not all(pd.api.types.is_numeric_dtype(df[c]) for c in columns):
+        raise TypeError("Scale features require numeric columns")
     if method not in SCALING_METHODS:
         raise ValueError(f"Invalid scaling method: {method}")
     df = df.copy()
