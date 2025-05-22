@@ -133,12 +133,12 @@ After completing a milestone, create a pull request with your changes for review
 
 ## PR11: Multi-Page Structure & Branding
 
-- [ ] Create `pages/` directory and refactor `app.py` into multiple pages
-- [ ] Implement sidebar navigation linking to each page
-- [ ] Add `static/` directory with placeholder `logo.png`
-- [ ] Integrate NeurArk colors and logo throughout the UI
-- [ ] Update README with new project structure
-- [ ] Write tests verifying that pages load correctly
+- [x] Create `pages/` directory and refactor `app.py` into multiple pages
+- [x] Implement sidebar navigation linking to each page
+- [x] Add `static/` directory with placeholder `logo.png`
+- [x] Integrate NeurArk colors and logo throughout the UI
+- [x] Update README with new project structure
+- [x] Write tests verifying that pages load correctly
 
 ## PR12: Data Transformation Module
 

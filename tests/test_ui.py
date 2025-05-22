@@ -15,6 +15,6 @@ def test_getting_started_markdown():
 
 
 def test_use_container_width():
-    with open("app.py", "r", encoding="utf-8") as f:
+    with open("pages/data_explorer.py", "r", encoding="utf-8") as f:
         content = f.read()
     assert "use_container_width=True" in content

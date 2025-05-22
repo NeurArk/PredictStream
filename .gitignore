@@ -144,3 +144,4 @@ reports/
 *.png
 *.jpg
 *.jpeg
+!static/logo.png

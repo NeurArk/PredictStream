@@ -4,10 +4,26 @@ from __future__ import annotations
 
 from typing import Dict
 
+from . import config
+import streamlit as st
+
 THEME_CSS: Dict[str, str] = {
     "Light": "",
     "Dark": "body { background-color: #0e1117; color: #f0f0f0; }",
 }
+
+# Branding colors
+BRAND_PRIMARY = "#4B8BBE"
+BRAND_CSS = f"""
+<style>
+:root {{
+    --brand-color: {BRAND_PRIMARY};
+}}
+h1, h2, h3 {{
+    color: var(--brand-color);
+}}
+</style>
+"""
 
 
 def get_theme_css(theme: str) -> str:
@@ -39,3 +55,10 @@ def help_markdown() -> str:
         "- Results and metrics appear below each section.\n"
         "- Export figures and predictions using the download buttons."
     )
+
+
+def apply_branding() -> None:
+    """Apply branding styles and logo to the sidebar."""
+    st.markdown(BRAND_CSS, unsafe_allow_html=True)
+    if config.LOGO_PATH.exists():
+        st.sidebar.image(str(config.LOGO_PATH), use_column_width=True)
