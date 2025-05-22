@@ -9,6 +9,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import numpy as np
+import seaborn as sns
 from sklearn.metrics import (
     roc_curve,
     precision_recall_curve,
@@ -93,6 +94,26 @@ def violin_plot(
     return fig
 
 
+def pair_plot(
+    df: pd.DataFrame,
+    *,
+    columns: Optional[list[str]] = None,
+    hue: Optional[str] = None,
+    title: Optional[str] = None,
+) -> plt.Figure:
+    """Return a pair plot figure for the selected columns."""
+    cols = columns or df.select_dtypes(include="number").columns.tolist()
+    plot_df = df[cols].copy()
+    if hue and hue in df.columns and hue not in cols:
+        plot_df[hue] = df[hue]
+    grid = sns.pairplot(plot_df, hue=hue)
+    fig = grid.fig
+    if title:
+        fig.suptitle(title)
+        fig.tight_layout()
+    return fig
+
+
 def heatmap(
     df: pd.DataFrame,
     *,
@@ -106,9 +127,28 @@ def heatmap(
     return fig
 
 
-def export_figure(fig: go.Figure, path: Path) -> None:
-    """Export a figure to an HTML file."""
-    fig.write_html(str(path))
+def export_figure(fig: object, path: Path) -> None:
+    """Export a figure to HTML or image formats."""
+    ext = path.suffix.lower()
+    if ext == ".html":
+        if isinstance(fig, go.Figure):
+            fig.write_html(str(path))
+        else:
+            raise ValueError("HTML export requires a Plotly figure")
+    elif ext in {".png", ".jpg", ".jpeg"}:
+        if isinstance(fig, go.Figure):
+            try:
+                fig.write_image(str(path))
+            except ValueError as exc:
+                raise RuntimeError(
+                    "Static image export requires the kaleido package"
+                ) from exc
+        elif isinstance(fig, plt.Figure):
+            fig.savefig(path)
+        else:
+            raise ValueError("Unsupported figure type for image export")
+    else:
+        raise ValueError(f"Unsupported export format: {ext}")
 
 
 def confusion_matrix_plot(y_true, y_pred, *, title: Optional[str] = None) -> go.Figure:

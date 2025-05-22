@@ -7,6 +7,9 @@ from utils import eda
 from utils import model
 from utils import transform
 from utils import ui
+from utils import viz
+from pathlib import Path
+import tempfile
 from sklearn.linear_model import LinearRegression
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
@@ -101,6 +104,39 @@ def main() -> None:
 
         corr = _corr(data)
         st.dataframe(corr, use_container_width=True)
+
+        st.subheader("Pair Plot")
+        with st.expander("Create Pair Plot"):
+            pair_cols = st.multiselect(
+                "Columns",
+                options=data.columns.tolist(),
+                default=data.select_dtypes(include="number").columns.tolist(),
+                key="pair_cols",
+            )
+            hue_col = st.selectbox(
+                "Color By",
+                options=["None"] + data.columns.tolist(),
+                index=0,
+                key="pair_hue",
+            )
+            export_fmt = st.selectbox(
+                "Export Format",
+                ["png", "jpg"],
+                key="pair_fmt",
+            )
+            if st.button("Generate Pair Plot") and pair_cols:
+                hue = None if hue_col == "None" else hue_col
+                fig_pair = viz.pair_plot(data, columns=pair_cols, hue=hue)
+                st.pyplot(fig_pair)
+                with tempfile.NamedTemporaryFile(suffix=f".{export_fmt}") as tmp:
+                    viz.export_figure(fig_pair, Path(tmp.name))
+                    tmp.seek(0)
+                    st.download_button(
+                        "Download Plot",
+                        data=tmp.read(),
+                        file_name=f"pair_plot.{export_fmt}",
+                        mime=f"image/{export_fmt}",
+                    )
 
         st.subheader("Insights")
         for insight in eda.data_insights_summary(data):
