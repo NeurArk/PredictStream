@@ -111,3 +111,23 @@ def test_time_series_page_contents():
     assert "time_series_plot" in content
     assert "decomposition_plot" in content
 
+
+def test_datetime_cols_persist_after_transforms():
+    import streamlit as st
+    from utils import transform, eda
+
+    df = pd.DataFrame(
+        {
+            "date": pd.date_range("2021-01-01", periods=3, freq="D"),
+            "value": [1.0, 2.0, 3.0],
+        }
+    )
+    st.session_state.clear()
+    st.session_state["data"] = df
+
+    df_trans = transform.scale_features(df.copy(), ["value"], method="standard")
+    st.session_state["data"] = df_trans
+    st.session_state["datetime_cols"] = eda.detect_datetime_columns(df_trans)
+
+    assert st.session_state["datetime_cols"] == ["date"]
+
