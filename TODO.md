@@ -151,10 +151,10 @@ After completing a milestone, create a pull request with your changes for review
 
 ## PR13: Enhanced Visualizations & Export
 
-- [ ] Implement pair plot visualization for feature relationships
-- [ ] Enable export of visualizations as PNG and JPG
-- [ ] Add UI selection for export format
-- [ ] Write tests for pair plot generation and image export
+- [x] Implement pair plot visualization for feature relationships
+- [x] Enable export of visualizations as PNG and JPG
+- [x] Add UI selection for export format
+- [x] Write tests for pair plot generation and image export
 
 ## PR14: XGBoost Model Integration
 

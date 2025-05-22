@@ -1,4 +1,5 @@
 import pandas as pd
+import matplotlib.pyplot as plt
 from utils import viz
 
 
@@ -51,3 +52,15 @@ def test_export_figure(tmp_path):
     out = tmp_path / 'chart.html'
     viz.export_figure(fig, out)
     assert out.exists() and out.stat().st_size > 0
+
+
+def test_pair_plot_and_image_export(tmp_path):
+    df = sample_df()
+    fig = viz.pair_plot(df, hue='cat')
+    assert isinstance(fig, plt.Figure)
+    png = tmp_path / 'pair.png'
+    jpg = tmp_path / 'pair.jpg'
+    viz.export_figure(fig, png)
+    viz.export_figure(fig, jpg)
+    assert png.exists() and png.stat().st_size > 0
+    assert jpg.exists() and jpg.stat().st_size > 0
