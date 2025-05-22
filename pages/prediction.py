@@ -22,8 +22,14 @@ def main() -> None:
 
     with st.sidebar:
         mode = st.radio("Mode", ["Single", "Batch"], key="pred_mode")
-        model_file = st.file_uploader("Upload Model (.joblib)", type=["joblib"], key="model_file")
-        data_file = st.file_uploader("Upload Data", type=["csv", "xlsx", "xls"], key="pred_data")
+        model_file = st.file_uploader(
+            "Upload Model (.joblib)", type=["joblib"], key="model_file"
+        )
+        data_utils.upload_data_to_session(
+            "Upload Data",
+            session_key="pred_data",
+            uploader_key="pred_data",
+        )
 
     model_obj = None
     if model_file is not None:
@@ -31,14 +37,6 @@ def main() -> None:
             tmp.write(model_file.read())
             tmp.flush()
             model_obj = predict.load_model(Path(tmp.name))
-
-    if data_file is not None:
-        try:
-            df = data_utils.load_data(data_file)
-            df = data_utils.convert_dtypes(df)
-            st.session_state["pred_data"] = df
-        except (ValueError, TypeError) as exc:
-            st.error(f"Failed to load data: {exc}")
 
     data = st.session_state.get("pred_data")
 

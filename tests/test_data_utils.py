@@ -61,3 +61,40 @@ def test_data_summary_empty():
     with pytest.raises(ValueError):
         data.data_summary(pd.DataFrame())
 
+
+def test_validate_file_type(tmp_path):
+    file = tmp_path / "a.csv"
+    file.write_text("a,b\n1,2")
+    ext = data.validate_file_type(file, ["csv", "xlsx"])
+    assert ext == ".csv"
+
+
+def test_validate_file_type_invalid(tmp_path):
+    file = tmp_path / "a.txt"
+    file.write_text("x")
+    with pytest.raises(ValueError):
+        data.validate_file_type(file, ["csv"])
+
+
+def test_process_uploaded_file(tmp_path):
+    import streamlit as st
+
+    df = pd.DataFrame({"a": [1]})
+    file = tmp_path / "test.csv"
+    df.to_csv(file, index=False)
+    st.session_state.clear()
+    data.process_uploaded_file(file, session_key="up")
+    pd.testing.assert_frame_equal(st.session_state["up"], df)
+
+
+def test_upload_data_to_session(monkeypatch, tmp_path):
+    import streamlit as st
+
+    df = pd.DataFrame({"a": [1]})
+    file = tmp_path / "test.csv"
+    df.to_csv(file, index=False)
+    st.session_state.clear()
+    monkeypatch.setattr(st, "file_uploader", lambda *a, **k: file)
+    data.upload_data_to_session("Upload", session_key="foo")
+    pd.testing.assert_frame_equal(st.session_state["foo"], df)
+
