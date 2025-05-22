@@ -76,6 +76,18 @@ def test_data_explorer_visualization_widgets_exist():
     assert "Generate Heatmap" in content
 
 
+def test_pair_plot_export(tmp_path):
+    df = pd.DataFrame({
+        "a": [1, 2, 3, 4],
+        "b": [4, 3, 2, 1],
+        "cat": ["x", "y", "x", "y"],
+    })
+    fig = viz.pair_plot(df, columns=["a", "b"], hue="cat")
+    out_file = tmp_path / "pair.png"
+    viz.export_figure(fig, out_file)
+    assert out_file.exists() and out_file.stat().st_size > 0
+
+
 def test_time_series_page_runs(monkeypatch):
     import streamlit as st
     from pages import time_series

@@ -139,7 +139,7 @@ def main() -> None:
                 with tempfile.NamedTemporaryFile(suffix=f".{export_fmt}") as tmp:
                     viz.export_figure(fig_pair, Path(tmp.name))
                     tmp.seek(0)
-                st.download_button(
+                    st.download_button(
                         "Download Plot",
                         data=tmp.read(),
                         file_name=f"pair_plot.{export_fmt}",
