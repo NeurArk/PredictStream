@@ -45,3 +45,23 @@ def test_metrics_and_plots_generated():
     resid = viz.residual_plot(y_test, preds_r)
     assert avp.data and resid.data
 
+
+def test_modeling_page_loads(monkeypatch):
+    import streamlit as st
+    from pages import modeling
+
+    df = pd.DataFrame({"a": [1, 2], "b": [3, 4], "target": [0, 1]})
+    st.session_state.clear()
+    st.session_state["data"] = df
+    monkeypatch.setattr(modeling.ui, "apply_branding", lambda: None)
+    modeling.main()
+
+
+def test_modeling_page_widgets_exist():
+    with open("pages/modeling.py", "r", encoding="utf-8") as f:
+        content = f.read()
+    assert "st.selectbox(\"Dataset\"" in content
+    assert "st.multiselect(\"Models\"" in content
+    assert "Train Models" in content
+    assert "export_model" in content
+
