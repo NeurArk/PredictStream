@@ -21,17 +21,13 @@ def main() -> None:
     st.title("Report Generator")
 
     with st.sidebar:
-        data_file = st.file_uploader(
-            "Upload Data", type=["csv", "xlsx", "xls"], key="report_data"
+        data_utils.upload_data_to_session(
+            "Upload Data",
+            session_key="report_data",
+            uploader_key="report_data",
         )
 
-    if data_file is not None:
-        try:
-            df = data_utils.load_data(data_file)
-            df = data_utils.convert_dtypes(df)
-            st.session_state["report_data"] = df
-        except (ValueError, TypeError) as exc:
-            st.error(f"Failed to load data: {exc}")
+
 
     df = st.session_state.get("report_data")
     if df is not None:

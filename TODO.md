@@ -189,6 +189,12 @@ After completing a milestone, create a pull request with your changes for review
 - [x] Surface error messages in UI pages using `st.error`
 - [x] Add tests for new error handling in data and transform modules
 
+## PR18: Upload Helpers Refactor
+
+- [x] Implement helper functions in `utils/data.py` for uploading/validating files
+- [x] Provide wrapper storing uploaded data in `st.session_state`
+- [x] Replace repetitive upload code across pages
+
 ## Notes for Development
 
 - Create comprehensive commit messages that clearly describe changes

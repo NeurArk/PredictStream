@@ -26,10 +26,11 @@ def main() -> None:
 
     with st.sidebar:
         st.header("Data Options")
-        uploaded_file = st.file_uploader(
+        data_utils.upload_data_to_session(
             "Upload CSV or Excel file",
-            type=["csv", "xlsx", "xls"],
-            key="file_uploader",
+            session_key="data",
+            datetime_key="datetime_cols",
+            uploader_key="file_uploader",
             help="Supported formats: CSV, XLSX",
         )
 
@@ -51,15 +52,7 @@ def main() -> None:
         with st.expander("Help"):
             st.markdown(ui.help_markdown())
 
-    if uploaded_file is not None:
-        try:
-            df = data_utils.load_data(uploaded_file)
-            df = data_utils.convert_dtypes(df)
-            st.session_state["data"] = df
-            st.session_state["datetime_cols"] = eda.detect_datetime_columns(df)
-            st.success("File loaded successfully!")
-        except (ValueError, TypeError) as exc:
-            st.error(f"Failed to load file: {exc}")
+
 
     data = st.session_state.get("data")
     if data is not None:
