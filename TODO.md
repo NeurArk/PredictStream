@@ -158,10 +158,10 @@ After completing a milestone, create a pull request with your changes for review
 
 ## PR14: XGBoost Model Integration
 
-- [ ] Extend model selection to include XGBoost for classification and regression
-- [ ] Provide basic hyperparameter options for XGBoost models
-- [ ] Update training utilities to support XGBoost
-- [ ] Write tests covering XGBoost training and evaluation
+- [x] Extend model selection to include XGBoost for classification and regression
+- [x] Provide basic hyperparameter options for XGBoost models
+- [x] Update training utilities to support XGBoost
+- [x] Write tests covering XGBoost training and evaluation
 
 ## PR15: Time Series Analysis
 

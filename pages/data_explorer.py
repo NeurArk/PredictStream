@@ -206,7 +206,7 @@ def main() -> None:
         )
         model_name = st.selectbox(
             "Model",
-            ["Logistic Regression", "Random Forest"],
+            ["Logistic Regression", "Random Forest", "XGBoost"],
             help="Choose a classification algorithm",
         )
 
@@ -220,7 +220,7 @@ def main() -> None:
                 step=0.01,
                 help="Inverse of regularization strength",
             )
-        else:
+        elif model_name == "Random Forest":
             hyperparams["n_estimators"] = st.slider(
                 "n_estimators",
                 10,
@@ -228,6 +228,31 @@ def main() -> None:
                 100,
                 step=10,
                 help="Number of trees",
+            )
+        else:
+            hyperparams["n_estimators"] = st.slider(
+                "n_estimators",
+                50,
+                300,
+                100,
+                step=10,
+                help="Number of boosting rounds",
+            )
+            hyperparams["learning_rate"] = st.number_input(
+                "learning_rate",
+                0.01,
+                1.0,
+                0.1,
+                step=0.01,
+                help="Learning rate",
+            )
+            hyperparams["max_depth"] = st.slider(
+                "max_depth",
+                1,
+                10,
+                3,
+                step=1,
+                help="Maximum tree depth",
             )
 
         if st.button("Train Model") and feature_cols:
@@ -248,11 +273,20 @@ def main() -> None:
                         C=hyperparams.get("C", 1.0),
                         max_iter=200,
                     )
-                else:
+                elif model_name == "Random Forest":
                     clf = model.train_random_forest_classifier(
                         X_train,
                         y_train,
                         n_estimators=hyperparams.get("n_estimators", 100),
+                        random_state=42,
+                    )
+                else:
+                    clf = model.train_xgboost_classifier(
+                        X_train,
+                        y_train,
+                        n_estimators=hyperparams.get("n_estimators", 100),
+                        learning_rate=hyperparams.get("learning_rate", 0.1),
+                        max_depth=hyperparams.get("max_depth", 3),
                         random_state=42,
                     )
                 progress.progress(75)
@@ -292,7 +326,7 @@ def main() -> None:
         )
         model_name_r = st.selectbox(
             "Model (reg)",
-            ["Linear Regression", "Decision Tree", "Random Forest"],
+            ["Linear Regression", "Decision Tree", "Random Forest", "XGBoost"],
             key="model_reg",
             help="Choose a regression algorithm",
         )
@@ -325,6 +359,34 @@ def main() -> None:
                 key="max_depth_rf",
                 help="Maximum tree depth",
             )
+        elif model_name_r == "XGBoost":
+            hyperparams_r["n_estimators"] = st.slider(
+                "n_estimators",
+                50,
+                300,
+                100,
+                10,
+                key="xgb_n_est",
+                help="Number of boosting rounds",
+            )
+            hyperparams_r["learning_rate"] = st.number_input(
+                "learning_rate",
+                0.01,
+                1.0,
+                0.1,
+                step=0.01,
+                key="xgb_lr",
+                help="Learning rate",
+            )
+            hyperparams_r["max_depth"] = st.slider(
+                "max_depth_xgb",
+                1,
+                10,
+                3,
+                step=1,
+                key="xgb_depth",
+                help="Maximum tree depth",
+            )
 
         if st.button("Train Regression Model") and feature_cols_r:
             progress_r = st.progress(0)
@@ -346,12 +408,21 @@ def main() -> None:
                         max_depth=hyperparams_r.get("max_depth"),
                         random_state=42,
                     )
-                else:
+                elif model_name_r == "Random Forest":
                     reg = model.train_random_forest_regressor(
                         X_train,
                         y_train,
                         n_estimators=hyperparams_r.get("n_estimators", 100),
                         max_depth=hyperparams_r.get("max_depth_rf"),
+                        random_state=42,
+                    )
+                else:
+                    reg = model.train_xgboost_regressor(
+                        X_train,
+                        y_train,
+                        n_estimators=hyperparams_r.get("n_estimators", 100),
+                        learning_rate=hyperparams_r.get("learning_rate", 0.1),
+                        max_depth=hyperparams_r.get("max_depth", 3),
                         random_state=42,
                     )
                 progress_r.progress(75)

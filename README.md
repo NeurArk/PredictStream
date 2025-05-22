@@ -9,8 +9,8 @@ An interactive Streamlit dashboard for data exploration and predictive analytics
 - **Automated EDA**: Get instant statistical summaries and data quality assessments
 - **Data Transformation**: Handle missing values, encode categories, and scale features
 - **Predictive Modeling**: Train and evaluate machine learning models
-  - Classification (Logistic Regression, Random Forest)
-  - Regression (Linear Regression, Decision Trees)
+  - Classification (Logistic Regression, Random Forest, XGBoost)
+  - Regression (Linear Regression, Decision Trees, XGBoost)
 - **Feature Importance**: Understand which variables drive your predictions
 - **Result Export**: Download visualizations and predictions
 - **Branding**: NeurArk colors and logo for a polished look

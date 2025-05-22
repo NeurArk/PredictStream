@@ -16,6 +16,7 @@ from sklearn.ensemble import (
     RandomForestRegressor,
 )
 from sklearn.tree import DecisionTreeRegressor
+from xgboost import XGBClassifier, XGBRegressor
 from sklearn.base import BaseEstimator
 
 
@@ -98,6 +99,29 @@ def train_random_forest_classifier(
     return model
 
 
+@cache_model
+def train_xgboost_classifier(
+    X: pd.DataFrame,
+    y: pd.Series,
+    *,
+    n_estimators: int = 100,
+    learning_rate: float = 0.1,
+    max_depth: int = 3,
+    random_state: int | None = None,
+) -> XGBClassifier:
+    """Train an XGBoost classifier."""
+    model = XGBClassifier(
+        n_estimators=n_estimators,
+        learning_rate=learning_rate,
+        max_depth=max_depth,
+        random_state=random_state,
+        eval_metric="logloss",
+        use_label_encoder=False,
+    )
+    model.fit(X, y)
+    return model
+
+
 def cross_validate_model(
     model: BaseEstimator,
     X: pd.DataFrame,
@@ -156,6 +180,27 @@ def train_random_forest_regressor(
     """Train a Random Forest Regressor."""
     model = RandomForestRegressor(
         n_estimators=n_estimators,
+        max_depth=max_depth,
+        random_state=random_state,
+    )
+    model.fit(X, y)
+    return model
+
+
+@cache_model
+def train_xgboost_regressor(
+    X: pd.DataFrame,
+    y: pd.Series,
+    *,
+    n_estimators: int = 100,
+    learning_rate: float = 0.1,
+    max_depth: int = 3,
+    random_state: int | None = None,
+) -> XGBRegressor:
+    """Train an XGBoost regressor."""
+    model = XGBRegressor(
+        n_estimators=n_estimators,
+        learning_rate=learning_rate,
         max_depth=max_depth,
         random_state=random_state,
     )

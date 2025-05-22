@@ -97,3 +97,29 @@ def test_compare_models_and_save(tmp_path):
     path = tmp_path / "model.joblib"
     model.save_model(models_dict["lin"], path)
     assert path.exists() and path.stat().st_size > 0
+
+
+def test_xgboost_training_functions():
+    df_c = sample_df()
+    X_train, X_test, y_train, y_test = model.train_test_split_data(df_c, "target")
+    xgb_clf = model.train_xgboost_classifier(
+        X_train,
+        y_train,
+        n_estimators=10,
+        max_depth=3,
+        learning_rate=0.1,
+    )
+    preds = xgb_clf.predict(X_test)
+    assert len(preds) == len(y_test)
+
+    df_r = sample_reg_df()
+    X_train, X_test, y_train, y_test = model.train_test_split_data(df_r, "target")
+    xgb_reg = model.train_xgboost_regressor(
+        X_train,
+        y_train,
+        n_estimators=10,
+        max_depth=3,
+        learning_rate=0.1,
+    )
+    preds = xgb_reg.predict(X_test)
+    assert len(preds) == len(y_test)
