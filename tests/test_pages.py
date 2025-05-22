@@ -1,6 +1,10 @@
 from importlib import import_module
 
+import pandas as pd
 import pytest
+from sklearn.datasets import make_classification, make_regression
+
+from utils import model, eval as evaluation, viz
 
 PAGES = [
     "pages.data_explorer",
@@ -13,3 +17,31 @@ PAGES = [
 def test_page_importable(mod_name):
     mod = import_module(mod_name)
     assert hasattr(mod, "main")
+
+
+def test_metrics_and_plots_generated():
+    Xc, yc = make_classification(n_samples=30, n_features=4, random_state=0)
+    dfc = pd.DataFrame(Xc, columns=[f"f{i}" for i in range(4)])
+    dfc["target"] = yc
+    X_train, X_test, y_train, y_test = model.train_test_split_data(dfc, "target")
+    clf = model.train_logistic_regression(X_train, y_train, max_iter=50)
+    preds = clf.predict(X_test)
+    metrics_c = evaluation.performance_metrics(y_test, preds, problem_type="classification")
+    assert "accuracy" in metrics_c
+    cm = viz.confusion_matrix_plot(y_test, preds)
+    roc = viz.roc_curve_plot(y_test, clf.predict_proba(X_test)[:, 1])
+    pr = viz.precision_recall_curve_plot(y_test, clf.predict_proba(X_test)[:, 1])
+    assert cm.data and roc.data and pr.data
+
+    Xr, yr = make_regression(n_samples=30, n_features=4, noise=0.1, random_state=0)
+    dfr = pd.DataFrame(Xr, columns=[f"f{i}" for i in range(4)])
+    dfr["target"] = yr
+    X_train, X_test, y_train, y_test = model.train_test_split_data(dfr, "target")
+    reg = model.train_linear_regression(X_train, y_train)
+    preds_r = reg.predict(X_test)
+    metrics_r = evaluation.performance_metrics(y_test, preds_r, problem_type="regression")
+    assert "r2" in metrics_r
+    avp = viz.actual_vs_predicted_plot(y_test, preds_r)
+    resid = viz.residual_plot(y_test, preds_r)
+    assert avp.data and resid.data
+
