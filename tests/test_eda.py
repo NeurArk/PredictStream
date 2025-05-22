@@ -66,3 +66,12 @@ def test_eda_caching():
     first = eda.summary_statistics(df)
     second = eda.summary_statistics(df)
     assert first is second
+
+
+def test_detect_datetime_columns_and_decompose():
+    dates = pd.date_range("2020-01-01", periods=10, freq="D")
+    df = pd.DataFrame({"date": dates, "val": range(10)})
+    cols = eda.detect_datetime_columns(df)
+    assert cols == ["date"]
+    parts = eda.naive_seasonal_decompose(df["val"], period=2)
+    assert set(parts) == {"trend", "seasonal", "resid"}
