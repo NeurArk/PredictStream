@@ -5,6 +5,45 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any, Iterable
 
+MAX_UPLOAD_SIZE_MB = 100
+
+
+def validate_file_size(file: Any, max_mb: int = MAX_UPLOAD_SIZE_MB) -> int:
+    """Validate that file size does not exceed ``max_mb`` megabytes.
+
+    Parameters
+    ----------
+    file:
+        A file-like object or path.
+    max_mb:
+        Maximum size in megabytes allowed.
+
+    Returns
+    -------
+    int
+        Size of the file in bytes.
+
+    Raises
+    ------
+    ValueError
+        If the file exceeds ``max_mb`` megabytes.
+    """
+    limit = max_mb * 1024 * 1024
+    size = getattr(file, "size", None)
+    if size is None:
+        try:
+            if isinstance(file, (str, Path)):
+                path = Path(file)
+            else:
+                path = Path(getattr(file, "name"))
+            size = path.stat().st_size
+        except OSError:
+            size = None
+    if size is not None and size > limit:
+        raise ValueError(f"File size {size} exceeds limit of {limit} bytes")
+    return size or 0
+
+
 import streamlit as st
 
 import pandas as pd
@@ -78,11 +117,13 @@ def process_uploaded_file(
     session_key: str,
     detect_datetime: bool = False,
     datetime_key: str = "datetime_cols",
+    max_size_mb: int = MAX_UPLOAD_SIZE_MB,
 ) -> pd.DataFrame | None:
     """Load an uploaded file and store the DataFrame in session state."""
     if uploaded_file is None:
         return None
     try:
+        _ = validate_file_size(uploaded_file, max_size_mb)
         _ = validate_file_type(uploaded_file, ["csv", "xls", "xlsx"])
         df = load_data(uploaded_file)
         df = convert_dtypes(df)
@@ -105,6 +146,7 @@ def upload_data_to_session(
     uploader_key: str | None = None,
     help: str | None = None,
     types: Iterable[str] = ("csv", "xlsx", "xls"),
+    max_size_mb: int = MAX_UPLOAD_SIZE_MB,
 ) -> pd.DataFrame | None:
     """Upload a file and store the loaded DataFrame in session state."""
     file = st.file_uploader(
@@ -118,4 +160,5 @@ def upload_data_to_session(
         session_key=session_key,
         detect_datetime=datetime_key is not None,
         datetime_key=datetime_key or "datetime_cols",
+        max_size_mb=max_size_mb,
     )
