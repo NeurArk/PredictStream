@@ -25,3 +25,23 @@ def test_regression_workflow():
     preds = reg.predict(X_test)
     metrics = evaluation.performance_metrics(y_test, preds, problem_type="regression")
     assert "r2" in metrics
+
+
+def test_xgboost_workflows():
+    Xc, yc = make_classification(n_samples=30, n_features=4, random_state=0)
+    dfc = pd.DataFrame(Xc, columns=[f"f{i}" for i in range(4)])
+    dfc["target"] = yc
+    X_train, X_test, y_train, y_test = model.train_test_split_data(dfc, "target")
+    clf = model.train_xgboost_classifier(X_train, y_train, n_estimators=10)
+    preds = clf.predict(X_test)
+    metrics = evaluation.performance_metrics(y_test, preds, problem_type="classification")
+    assert "accuracy" in metrics
+
+    Xr, yr = make_regression(n_samples=30, n_features=4, noise=0.1, random_state=0)
+    dfr = pd.DataFrame(Xr, columns=[f"f{i}" for i in range(4)])
+    dfr["target"] = yr
+    X_train, X_test, y_train, y_test = model.train_test_split_data(dfr, "target")
+    reg = model.train_xgboost_regressor(X_train, y_train, n_estimators=10)
+    preds = reg.predict(X_test)
+    metrics = evaluation.performance_metrics(y_test, preds, problem_type="regression")
+    assert "r2" in metrics
