@@ -179,6 +179,7 @@ After completing a milestone, create a pull request with your changes for review
 ## Additional Updates
 
 - [x] Integrated evaluation metrics and plots into the Data Explorer page
+- [x] Implemented modeling page with model selection, training, cross-validation, and export functionality
 
 ## Notes for Development
 
