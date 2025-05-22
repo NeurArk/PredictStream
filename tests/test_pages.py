@@ -2,7 +2,12 @@ from importlib import import_module
 
 import pytest
 
-PAGES = ["pages.data_explorer", "pages.modeling"]
+PAGES = [
+    "pages.data_explorer",
+    "pages.modeling",
+    "pages.prediction",
+    "pages.report",
+]
 
 @pytest.mark.parametrize("mod_name", PAGES)
 def test_page_importable(mod_name):

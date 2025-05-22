@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from typing import Any, Dict, List
+from pathlib import Path
 from functools import wraps
 
 import numpy as np
@@ -84,6 +85,13 @@ def profile_report(df: pd.DataFrame) -> Dict[str, Any]:
         "quality": data_quality_assessment(df),
         "correlation": correlation_matrix(df),
     }
+
+
+def export_report(report: Dict[str, pd.DataFrame], path: Path) -> None:
+    """Export a profile report to an Excel file."""
+    with pd.ExcelWriter(path) as writer:
+        for name, table in report.items():
+            table.to_excel(writer, sheet_name=name)
 
 
 def data_insights_summary(df: pd.DataFrame) -> List[str]:

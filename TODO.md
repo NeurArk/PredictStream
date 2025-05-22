@@ -171,10 +171,10 @@ After completing a milestone, create a pull request with your changes for review
 
 ## PR16: Dedicated Prediction & Report Pages
 
-- [ ] Create separate page for single and batch predictions
-- [ ] Add page for generating and downloading analysis reports
-- [ ] Ensure navigation links include new pages
-- [ ] Write integration tests for prediction and report pages
+- [x] Create separate page for single and batch predictions
+- [x] Add page for generating and downloading analysis reports
+- [x] Ensure navigation links include new pages
+- [x] Write integration tests for prediction and report pages
 
 ## Notes for Development
 

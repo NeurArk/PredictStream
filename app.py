@@ -17,6 +17,8 @@ def main() -> None:
         st.page_link("app.py", label="Home", icon="🏠")
         st.page_link("pages/data_explorer.py", label="Data Explorer", icon="📊")
         st.page_link("pages/modeling.py", label="Modeling", icon="🧠")
+        st.page_link("pages/prediction.py", label="Prediction", icon="🔮")
+        st.page_link("pages/report.py", label="Report", icon="📄")
 
 
 if __name__ == "__main__":
