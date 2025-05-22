@@ -5,6 +5,7 @@ from utils import config
 from utils import data as data_utils
 from utils import eda
 from utils import model
+from utils import transform
 from utils import ui
 from sklearn.linear_model import LinearRegression
 from sklearn.tree import DecisionTreeRegressor
@@ -104,6 +105,48 @@ def main() -> None:
         st.subheader("Insights")
         for insight in eda.data_insights_summary(data):
             st.write(f"- {insight}")
+
+        st.subheader("Data Transformation")
+        with st.expander("Transform Options"):
+            missing_strategy = st.selectbox(
+                "Missing Value Strategy",
+                ["None", "Drop rows", "Fill Mean", "Fill Median", "Fill Mode"],
+            )
+            encode_cols = st.multiselect(
+                "Columns to Encode",
+                options=data.select_dtypes(exclude="number").columns.tolist(),
+            )
+            encode_method = st.selectbox(
+                "Encoding Method",
+                ["One-Hot", "Label"],
+            )
+            scale_cols = st.multiselect(
+                "Columns to Scale",
+                options=data.select_dtypes(include="number").columns.tolist(),
+            )
+            scale_method = st.selectbox(
+                "Scaling Method",
+                ["Standard", "Min-Max"],
+            )
+        if st.button("Apply Transformations"):
+            df_trans = data.copy()
+            if missing_strategy == "Drop rows":
+                df_trans = transform.handle_missing_values(df_trans, strategy="drop")
+            elif missing_strategy == "Fill Mean":
+                df_trans = transform.handle_missing_values(df_trans, strategy="mean")
+            elif missing_strategy == "Fill Median":
+                df_trans = transform.handle_missing_values(df_trans, strategy="median")
+            elif missing_strategy == "Fill Mode":
+                df_trans = transform.handle_missing_values(df_trans, strategy="mode")
+            if encode_cols:
+                method = "onehot" if encode_method == "One-Hot" else "label"
+                df_trans = transform.encode_features(df_trans, encode_cols, method=method)
+            if scale_cols:
+                method = "standard" if scale_method == "Standard" else "minmax"
+                df_trans = transform.scale_features(df_trans, scale_cols, method=method)
+            st.session_state["data"] = df_trans
+            data = df_trans
+            st.success("Transformations applied!")
 
         st.subheader("Model Training - Classification")
         target = st.selectbox(

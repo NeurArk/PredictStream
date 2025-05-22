@@ -8,5 +8,16 @@ from . import model
 from . import eval
 from . import predict
 from . import ui
+from . import transform
 
-__all__ = ["config", "data", "eda", "viz", "model", "eval", "predict", "ui"]
+__all__ = [
+    "config",
+    "data",
+    "eda",
+    "viz",
+    "model",
+    "eval",
+    "predict",
+    "ui",
+    "transform",
+]

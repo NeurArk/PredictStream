@@ -142,12 +142,12 @@ After completing a milestone, create a pull request with your changes for review
 
 ## PR12: Data Transformation Module
 
-- [ ] Implement missing value handling options (drop, fill with mean/median/mode)
-- [ ] Add feature encoding choices (one-hot and label encoding)
-- [ ] Provide scaling/normalization utilities (min-max and standard)
-- [ ] Create UI controls for applying transformations
-- [ ] Write unit tests for transformation functions
-- [ ] Add integration tests covering transformation workflow
+- [x] Implement missing value handling options (drop, fill with mean/median/mode)
+- [x] Add feature encoding choices (one-hot and label encoding)
+- [x] Provide scaling/normalization utilities (min-max and standard)
+- [x] Create UI controls for applying transformations
+- [x] Write unit tests for transformation functions
+- [x] Add integration tests covering transformation workflow
 
 ## PR13: Enhanced Visualizations & Export
 
