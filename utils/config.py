@@ -9,6 +9,9 @@ STATIC_DIR = BASE_DIR / "static"
 LOGO_PATH = STATIC_DIR / "logo.png"
 
 SAMPLE_DATASETS = {
-    "Iris Sample": SAMPLE_DIR / "iris_sample.csv",
-    "Tips Sample": SAMPLE_DIR / "tips_sample.csv",
+    "Titanic (Classification)": SAMPLE_DIR / "titanic.csv",
+    "California Housing (Regression)": SAMPLE_DIR / "california_housing.csv", 
+    "Customer Churn (Classification)": SAMPLE_DIR / "telco_churn.csv",
+    "Airline Passengers (Time Series)": SAMPLE_DIR / "airline_passengers.csv",
+    "Wine Quality (Multi-class)": SAMPLE_DIR / "wine_quality.csv",
 }

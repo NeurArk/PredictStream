@@ -79,4 +79,27 @@ def apply_branding() -> None:
     """Apply branding styles and logo to the sidebar."""
     st.markdown(BRAND_CSS, unsafe_allow_html=True)
     if config.LOGO_PATH.exists():
-        st.sidebar.image(str(config.LOGO_PATH), use_column_width=True)
+        st.sidebar.image(str(config.LOGO_PATH), use_container_width=True)
+
+
+def display_plotly_chart(fig, key=None, use_container_width=True):
+    """Display a Plotly chart with minimal configuration.
+    
+    This function wraps st.plotly_chart with sensible defaults.
+    """
+    # Simple configuration for better image export
+    config = {
+        'displayModeBar': True,
+        'displaylogo': False,
+        'modeBarButtonsToRemove': ['lasso2d', 'select2d'],
+        'toImageButtonOptions': {
+            'format': 'png',
+            'filename': 'plot',
+            'height': 1200,
+            'width': 1600,
+            'scale': 2
+        }
+    }
+    
+    # Display the chart without any custom CSS or layout modifications
+    st.plotly_chart(fig, use_container_width=use_container_width, config=config, key=key)

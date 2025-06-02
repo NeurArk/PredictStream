@@ -9,7 +9,7 @@ import logging
 import pandas as pd
 import streamlit as st
 
-from . import eda, eval as evaluation, model, transform, viz
+from . import eda, eval as evaluation, model, transform, viz, ui
 from sklearn.linear_model import LinearRegression
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
@@ -17,6 +17,7 @@ from sklearn.ensemble import RandomForestRegressor
 
 def visualization_section(data: pd.DataFrame) -> None:
     """Render interactive visualization tools for the given data."""
+    st.markdown("---")  # Add separator before visualization section
     st.subheader("Pair Plot")
     with st.expander("Create Pair Plot"):
         pair_cols = st.multiselect(
@@ -50,6 +51,7 @@ def visualization_section(data: pd.DataFrame) -> None:
                     mime=f"image/{export_fmt}",
                 )
 
+    st.markdown("---")
     st.subheader("Histogram")
     with st.expander("Create Histogram"):
         num_cols = data.select_dtypes(include="number").columns.tolist()
@@ -79,7 +81,9 @@ def visualization_section(data: pd.DataFrame) -> None:
                 bins=bins,
                 density=density,
             )
-            st.plotly_chart(fig_hist, use_container_width=True)
+            with st.container():
+                ui.display_plotly_chart(fig_hist, use_container_width=True)
+                st.markdown("&nbsp;")  # Add space after chart
             with tempfile.NamedTemporaryFile(suffix=f".{export_fmt_h}") as tmp:
                 viz.export_figure(fig_hist, Path(tmp.name))
                 tmp.seek(0)
@@ -90,6 +94,7 @@ def visualization_section(data: pd.DataFrame) -> None:
                     mime=f"image/{export_fmt_h}",
                 )
 
+    st.markdown("---")
     st.subheader("Box Plot")
     with st.expander("Create Box Plot"):
         x_col = st.selectbox(
@@ -110,7 +115,9 @@ def visualization_section(data: pd.DataFrame) -> None:
         )
         if st.button("Generate Box Plot") and x_col and y_col:
             fig_box = viz.box_plot(data, x=x_col, y=y_col)
-            st.plotly_chart(fig_box, use_container_width=True)
+            with st.container():
+                ui.display_plotly_chart(fig_box, use_container_width=True)
+                st.markdown("&nbsp;")
             with tempfile.NamedTemporaryFile(suffix=f".{export_fmt_b}") as tmp:
                 viz.export_figure(fig_box, Path(tmp.name))
                 tmp.seek(0)
@@ -121,6 +128,7 @@ def visualization_section(data: pd.DataFrame) -> None:
                     mime=f"image/{export_fmt_b}",
                 )
 
+    st.markdown("---")
     st.subheader("Violin Plot")
     with st.expander("Create Violin Plot"):
         x_col_v = st.selectbox(
@@ -141,7 +149,9 @@ def visualization_section(data: pd.DataFrame) -> None:
         )
         if st.button("Generate Violin Plot") and x_col_v and y_col_v:
             fig_violin = viz.violin_plot(data, x=x_col_v, y=y_col_v)
-            st.plotly_chart(fig_violin, use_container_width=True)
+            with st.container():
+                ui.display_plotly_chart(fig_violin, use_container_width=True)
+                st.markdown("&nbsp;")
             with tempfile.NamedTemporaryFile(suffix=f".{export_fmt_v}") as tmp:
                 viz.export_figure(fig_violin, Path(tmp.name))
                 tmp.seek(0)
@@ -152,6 +162,7 @@ def visualization_section(data: pd.DataFrame) -> None:
                     mime=f"image/{export_fmt_v}",
                 )
 
+    st.markdown("---")
     st.subheader("Heatmap")
     with st.expander("Create Heatmap"):
         heat_cols = st.multiselect(
@@ -167,7 +178,9 @@ def visualization_section(data: pd.DataFrame) -> None:
         )
         if st.button("Generate Heatmap") and heat_cols:
             fig_heat = viz.heatmap(data[heat_cols])
-            st.plotly_chart(fig_heat, use_container_width=True)
+            with st.container():
+                ui.display_plotly_chart(fig_heat, use_container_width=True)
+                st.markdown("&nbsp;")
             with tempfile.NamedTemporaryFile(suffix=f".{export_fmt_hm}") as tmp:
                 viz.export_figure(fig_heat, Path(tmp.name))
                 tmp.seek(0)
@@ -178,6 +191,7 @@ def visualization_section(data: pd.DataFrame) -> None:
                     mime=f"image/{export_fmt_hm}",
                 )
 
+    st.markdown("---")
     st.subheader("Insights")
     for insight in eda.data_insights_summary(data):
         st.write(f"- {insight}")
@@ -213,6 +227,7 @@ def _cached_transformations(
 
 def transformation_section(data: pd.DataFrame) -> pd.DataFrame:
     """Provide UI to apply common data transformations."""
+    st.markdown("---")
     st.subheader("Data Transformation")
     with st.expander("Transform Options"):
         missing_strategy = st.selectbox(
@@ -257,6 +272,7 @@ def transformation_section(data: pd.DataFrame) -> pd.DataFrame:
 
 def classification_training_section(data: pd.DataFrame) -> None:
     """UI for training classification models and displaying metrics."""
+    st.markdown("---")
     st.subheader("Model Training - Classification")
     target = st.selectbox(
         "Target Column",
@@ -376,7 +392,9 @@ def classification_training_section(data: pd.DataFrame) -> None:
             st.json(metrics)
 
             fig_cm = viz.confusion_matrix_plot(y_test, y_pred)
-            st.plotly_chart(fig_cm, use_container_width=True)
+            with st.container():
+                ui.display_plotly_chart(fig_cm, use_container_width=True)
+                st.markdown("&nbsp;")
             with tempfile.NamedTemporaryFile(suffix=".png") as tmp:
                 viz.export_figure(fig_cm, Path(tmp.name))
                 tmp.seek(0)
@@ -392,7 +410,9 @@ def classification_training_section(data: pd.DataFrame) -> None:
             else:
                 y_score = clf.decision_function(X_test)
             fig_roc = viz.roc_curve_plot(y_test, y_score)
-            st.plotly_chart(fig_roc, use_container_width=True)
+            with st.container():
+                ui.display_plotly_chart(fig_roc, use_container_width=True)
+                st.markdown("&nbsp;")
             with tempfile.NamedTemporaryFile(suffix=".png") as tmp:
                 viz.export_figure(fig_roc, Path(tmp.name))
                 tmp.seek(0)
@@ -404,7 +424,9 @@ def classification_training_section(data: pd.DataFrame) -> None:
                 )
 
             fig_pr = viz.precision_recall_curve_plot(y_test, y_score)
-            st.plotly_chart(fig_pr, use_container_width=True)
+            with st.container():
+                ui.display_plotly_chart(fig_pr, use_container_width=True)
+                st.markdown("&nbsp;")
             with tempfile.NamedTemporaryFile(suffix=".png") as tmp:
                 viz.export_figure(fig_pr, Path(tmp.name))
                 tmp.seek(0)
@@ -417,7 +439,9 @@ def classification_training_section(data: pd.DataFrame) -> None:
 
             if st.checkbox("Show Feature Importance"):
                 fig_imp = viz.feature_importance_plot(clf, feature_cols)
-                st.plotly_chart(fig_imp, use_container_width=True)
+                with st.container():
+                    ui.display_plotly_chart(fig_imp, use_container_width=True)
+                    st.markdown("&nbsp;")
                 with tempfile.NamedTemporaryFile(suffix=".png") as tmp:
                     viz.export_figure(fig_imp, Path(tmp.name))
                     tmp.seek(0)
@@ -453,6 +477,7 @@ def classification_training_section(data: pd.DataFrame) -> None:
 
 def regression_training_section(data: pd.DataFrame) -> None:
     """UI for training regression models and displaying metrics."""
+    st.markdown("---")
     st.subheader("Model Training - Regression")
     target_r = st.selectbox(
         "Target Column (regression)",
@@ -591,7 +616,9 @@ def regression_training_section(data: pd.DataFrame) -> None:
             st.json(metrics)
 
             fig_avp = viz.actual_vs_predicted_plot(y_test, preds)
-            st.plotly_chart(fig_avp, use_container_width=True)
+            with st.container():
+                ui.display_plotly_chart(fig_avp, use_container_width=True)
+                st.markdown("&nbsp;")
             with tempfile.NamedTemporaryFile(suffix=".png") as tmp:
                 viz.export_figure(fig_avp, Path(tmp.name))
                 tmp.seek(0)
@@ -603,7 +630,9 @@ def regression_training_section(data: pd.DataFrame) -> None:
                 )
 
             fig_resid = viz.residual_plot(y_test, preds)
-            st.plotly_chart(fig_resid, use_container_width=True)
+            with st.container():
+                ui.display_plotly_chart(fig_resid, use_container_width=True)
+                st.markdown("&nbsp;")
             with tempfile.NamedTemporaryFile(suffix=".png") as tmp:
                 viz.export_figure(fig_resid, Path(tmp.name))
                 tmp.seek(0)
@@ -616,7 +645,9 @@ def regression_training_section(data: pd.DataFrame) -> None:
 
             if st.checkbox("Show Feature Importance", key="fi_reg"):
                 fig_imp_r = viz.feature_importance_plot(reg, feature_cols_r)
-                st.plotly_chart(fig_imp_r, use_container_width=True)
+                with st.container():
+                    ui.display_plotly_chart(fig_imp_r, use_container_width=True)
+                    st.markdown("&nbsp;")
                 with tempfile.NamedTemporaryFile(suffix=".png") as tmp:
                     viz.export_figure(fig_imp_r, Path(tmp.name))
                     tmp.seek(0)

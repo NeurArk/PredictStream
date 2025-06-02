@@ -83,10 +83,45 @@ def convert_dtypes(df: pd.DataFrame) -> pd.DataFrame:
         raise TypeError("df must be a pandas DataFrame")
     for column in df.columns:
         if df[column].dtype == object:
-            df[column] = pd.to_numeric(df[column], errors="ignore")
-            if df[column].dtype == object:
-                df[column] = pd.to_datetime(df[column], errors="ignore")
+            # Try to convert to numeric
+            try:
+                df[column] = pd.to_numeric(df[column])
+            except (ValueError, TypeError):
+                # If numeric conversion fails, try datetime
+                try:
+                    df[column] = pd.to_datetime(df[column], format='mixed', dayfirst=False)
+                except (ValueError, TypeError):
+                    # Keep as object if both conversions fail
+                    pass
     return df
+
+
+def prepare_dataframe_for_display(df: pd.DataFrame) -> pd.DataFrame:
+    """Prepare dataframe for Streamlit display to avoid Arrow serialization errors."""
+    if not isinstance(df, pd.DataFrame):
+        return df
+    
+    # Create a copy to avoid modifying the original
+    display_df = df.copy()
+    
+    # Convert problematic dtypes
+    for col in display_df.columns:
+        # Handle numpy dtypes that Arrow doesn't like
+        if hasattr(display_df[col], 'dtype') and 'numpy.dtypes' in str(type(display_df[col].dtype)):
+            display_df[col] = display_df[col].astype(str)
+        # Convert any remaining object columns that might cause issues
+        elif display_df[col].dtype == 'object':
+            # Check if column contains mixed types
+            try:
+                # If it's all strings, keep as is
+                if all(isinstance(x, (str, type(None))) for x in display_df[col].dropna().head(100)):
+                    continue
+                # Otherwise convert to string
+                display_df[col] = display_df[col].astype(str)
+            except:
+                display_df[col] = display_df[col].astype(str)
+    
+    return display_df
 
 
 def data_summary(df: pd.DataFrame) -> pd.DataFrame:

@@ -7,3 +7,9 @@ textColor="#262730"
 
 [server]
 headless=true
+enableXsrfProtection=true
+enableCORS=true
+enableWebsocketCompression=false
+
+[browser]
+gatherUsageStats=false

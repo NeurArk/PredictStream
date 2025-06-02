@@ -69,7 +69,7 @@ def main() -> None:
         )
         start = (page - 1) * page_size
         end = start + page_size
-        st.dataframe(data.iloc[start:end], use_container_width=True)
+        st.dataframe(data_utils.prepare_dataframe_for_display(data.iloc[start:end]), use_container_width=True)
 
         st.subheader("Summary Statistics")
 
@@ -78,7 +78,7 @@ def main() -> None:
             return eda.summary_statistics(df)
 
         summary = _summary(data)
-        st.dataframe(summary, use_container_width=True)
+        st.dataframe(data_utils.prepare_dataframe_for_display(summary), use_container_width=True)
 
         st.subheader("Data Quality")
 
@@ -87,7 +87,7 @@ def main() -> None:
             return eda.data_quality_assessment(df)
 
         quality = _quality(data)
-        st.dataframe(quality, use_container_width=True)
+        st.dataframe(data_utils.prepare_dataframe_for_display(quality), use_container_width=True)
 
         st.subheader("Correlation Matrix")
 
@@ -96,11 +96,14 @@ def main() -> None:
             return eda.correlation_matrix(df)
 
         corr = _corr(data)
-        st.dataframe(corr, use_container_width=True)
+        st.dataframe(data_utils.prepare_dataframe_for_display(corr), use_container_width=True)
 
         components.visualization_section(data)
+        st.markdown("&nbsp;")  # Add spacing between major sections
         data = components.transformation_section(data)
+        st.markdown("&nbsp;")
         components.classification_training_section(data)
+        st.markdown("&nbsp;")
         components.regression_training_section(data)
 
 

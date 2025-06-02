@@ -32,6 +32,7 @@ def histogram(
     """Return a histogram or density plot for a column."""
     histnorm = "probability density" if density else None
     fig = px.histogram(df, x=column, nbins=bins, histnorm=histnorm, title=title)
+    fig.update_layout(height=500, margin=dict(l=20, r=20, t=40, b=20))
     return fig
 
 
@@ -81,6 +82,7 @@ def box_plot(
 ) -> go.Figure:
     """Return a box plot."""
     fig = px.box(df, x=x, y=y, title=title)
+    fig.update_layout(height=500, margin=dict(l=20, r=20, t=40, b=20))
     return fig
 
 
@@ -93,6 +95,7 @@ def violin_plot(
 ) -> go.Figure:
     """Return a violin plot."""
     fig = px.violin(df, x=x, y=y, box=True, title=title)
+    fig.update_layout(height=500, margin=dict(l=20, r=20, t=40, b=20))
     return fig
 
 
@@ -125,7 +128,22 @@ def heatmap(
     """Return a correlation heatmap for the given columns."""
     cols = columns or df.select_dtypes(include="number").columns.tolist()
     corr = df[cols].corr()
-    fig = px.imshow(corr, text_auto=True, title=title)
+    
+    # Use px.imshow for simpler and more stable heatmap
+    fig = px.imshow(
+        corr,
+        text_auto=".2f",
+        aspect="auto",
+        color_continuous_scale='RdBu',
+        color_continuous_midpoint=0,
+        title=title or "Correlation Heatmap"
+    )
+    
+    # Minimal layout updates
+    fig.update_layout(
+        margin=dict(l=20, r=20, t=40, b=20)
+    )
+    
     return fig
 
 
@@ -141,7 +159,15 @@ def export_figure(fig: object, path: Path) -> None:
     elif ext in {".png", ".jpg", ".jpeg"}:
         if isinstance(fig, go.Figure):
             try:
-                fig.write_image(str(path))
+                # Create a copy to avoid modifying the original figure
+                fig_copy = go.Figure(fig)
+                # Apply white background for export
+                fig_copy.update_layout(
+                    template="plotly_white",
+                    plot_bgcolor='white',
+                    paper_bgcolor='white',
+                )
+                fig_copy.write_image(str(path), width=1200, height=800, scale=2)
             except ValueError as exc:
                 logging.getLogger(__name__).exception(
                     "Static image export failed: %s", exc
@@ -150,7 +176,7 @@ def export_figure(fig: object, path: Path) -> None:
                     "Static image export requires the kaleido package"
                 ) from exc
         elif isinstance(fig, plt.Figure):
-            fig.savefig(path)
+            fig.savefig(path, dpi=150, bbox_inches='tight', facecolor='white', edgecolor='none')
         else:
             logging.getLogger(__name__).error("Unsupported figure type for image export")
             raise ValueError("Unsupported figure type for image export")
@@ -165,6 +191,7 @@ def confusion_matrix_plot(y_true, y_pred, *, title: Optional[str] = None) -> go.
     fig = px.imshow(cm, text_auto=True, color_continuous_scale="Blues", title=title)
     fig.update_xaxes(title="Predicted")
     fig.update_yaxes(title="Actual")
+    fig.update_layout(height=500, margin=dict(l=20, r=20, t=40, b=20))
     return fig
 
 
